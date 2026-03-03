@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/emergency.dart';
+import 'emergency_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -128,13 +130,19 @@ class HomeScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to emergency detail screen
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Selected: $title'),
-            duration: const Duration(seconds: 1),
-          ),
-        );
+        // Find the emergency from sample data
+          final emergencies = getSampleEmergencies();
+          final emergency = emergencies.firstWhere(
+            (e) => e.name == title,
+          );
+          
+          // Navigate to detail screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmergencyDetailScreen(emergency: emergency),
+            ),
+          );
       },
       child: Container(
         decoration: BoxDecoration(
