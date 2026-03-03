@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/emergency.dart';
 import 'emergency_detail_screen.dart';
-
+import 'settings_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -10,18 +10,33 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Guardian Angel',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
+  title: const Text(
+    'Guardian Angel',
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+    ),
+  ),
+  backgroundColor: const Color(0xFFE53935),
+  foregroundColor: Colors.white,
+  elevation: 2,
+  centerTitle: true,
+  actions: [
+    // Settings Icon Button
+    IconButton(
+      icon: const Icon(Icons.settings),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SettingsScreen(),
           ),
-        ),
-        backgroundColor: const Color(0xFFE53935), // Red
-        foregroundColor: Colors.white,
-        elevation: 2,
-        centerTitle: true,
-      ),
+        );
+      },
+      tooltip: 'Settings',
+    ),
+  ],
+),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
