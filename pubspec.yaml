@@ -34,6 +34,20 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  
+  # For storing user preferences (disclaimer acceptance, settings)
+  shared_preferences: ^2.2.2
+  
+  # Database (we'll use later for emergency contacts, logs)
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  
+  # Text-to-Speech (we'll use later)
+  flutter_tts: ^4.0.2
+  
+  # Phone calling (we'll use later)
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:

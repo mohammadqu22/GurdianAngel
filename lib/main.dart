@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
+import 'screens/disclaimer_screen.dart';
 
-void main() {
-  runApp(const GuardianAngelApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Check if disclaimer was already accepted
+  final prefs = await SharedPreferences.getInstance();
+  final disclaimerAccepted = prefs.getBool('disclaimer_accepted') ?? false;
+  
+  runApp(GuardianAngelApp(showDisclaimer: !disclaimerAccepted));
 }
 
 class GuardianAngelApp extends StatelessWidget {
-  const GuardianAngelApp({super.key});
+  final bool showDisclaimer;
+  
+  const GuardianAngelApp({
+    super.key,
+    required this.showDisclaimer,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +31,7 @@ class GuardianAngelApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
-      home: const HomeScreen(),
+      home: showDisclaimer ? const DisclaimerScreen() : const HomeScreen(),
     );
   }
 }
