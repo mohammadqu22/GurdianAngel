@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/emergency.dart';
 import 'emergency_detail_screen.dart';
 import 'settings_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -113,14 +114,18 @@ class HomeScreen extends StatelessWidget {
       
       // Emergency Call Button (Floating)
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Implement emergency call
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Emergency Call Feature - Coming Soon'),
-              duration: Duration(seconds: 2),
-            ),
-          );
+        onPressed: () async {
+          final Uri callUri = Uri(scheme: 'tel', path: '101');
+          try {
+            await launchUrl(callUri);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not open dialer. Please call 101 manually.'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
         },
         backgroundColor: const Color(0xFFE53935),
         icon: const Icon(Icons.phone, color: Colors.white),
