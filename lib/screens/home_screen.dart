@@ -3,41 +3,74 @@ import '../models/emergency.dart';
 import 'emergency_detail_screen.dart';
 import 'settings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  // All emergencies list
+  final List<Map<String, dynamic>> _allEmergencies = [
+    {'title': 'Burns', 'icon': Icons.local_fire_department, 'color': Color(0xFFFF5722)},
+    {'title': 'Choking', 'icon': Icons.air, 'color': Color(0xFF2196F3)},
+    {'title': 'CPR', 'icon': Icons.favorite, 'color': Color(0xFFE53935)},
+    {'title': 'Bleeding', 'icon': Icons.water_drop, 'color': Color(0xFFD32F2F)},
+    {'title': 'Fractures', 'icon': Icons.accessible, 'color': Color(0xFF9C27B0)},
+    {'title': 'Seizures', 'icon': Icons.warning_amber_rounded, 'color': Color(0xFFFFA726)},
+  ];
+
+  List<Map<String, dynamic>> get _filteredEmergencies {
+    if (_searchQuery.isEmpty) return _allEmergencies;
+    return _allEmergencies
+        .where((e) => (e['title'] as String)
+            .toLowerCase()
+            .contains(_searchQuery.toLowerCase()))
+        .toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-  title: const Text(
-    'Guardian Angel',
-    style: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 22,
-    ),
-  ),
-  backgroundColor: const Color(0xFFE53935),
-  foregroundColor: Colors.white,
-  elevation: 2,
-  centerTitle: true,
-  actions: [
-    // Settings Icon Button
-    IconButton(
-      icon: const Icon(Icons.settings),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SettingsScreen(),
+        title: const Text(
+          'Guardian Angel',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
           ),
-        );
-      },
-      tooltip: 'Settings',
-    ),
-  ],
-),
+        ),
+        backgroundColor: const Color(0xFFE53935),
+        foregroundColor: Colors.white,
+        elevation: 2,
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+            tooltip: 'Settings',
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -60,58 +93,77 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            // Emergency Category Grid
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2, // 2 columns
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _buildEmergencyCard(
-                    context,
-                    title: 'Burns',
-                    icon: Icons.local_fire_department,
-                    color: const Color(0xFFFF5722), // Orange-red
-                  ),
-                  _buildEmergencyCard(
-                    context,
-                    title: 'Choking',
-                    icon: Icons.air,
-                    color: const Color(0xFF2196F3), // Blue
-                  ),
-                  _buildEmergencyCard(
-                    context,
-                    title: 'CPR',
-                    icon: Icons.favorite,
-                    color: const Color(0xFFE53935), // Red
-                  ),
-                  _buildEmergencyCard(
-                    context,
-                    title: 'Bleeding',
-                    icon: Icons.water_drop,
-                    color: const Color(0xFFD32F2F), // Dark red
-                  ),
-                  _buildEmergencyCard(
-                    context,
-                    title: 'Fractures',
-                    icon: Icons.accessible,
-                    color: const Color(0xFF9C27B0), // Purple
-                  ),
-                  _buildEmergencyCard(
-                    context,
-                    title: 'Seizures',
-                    icon: Icons.warning_amber_rounded,
-                    color: const Color(0xFFFFA726), // Orange
-                  ),
-                ],
+            // Search Bar
+            TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search emergency...',
+                prefixIcon: const Icon(Icons.search, color: Color(0xFFE53935)),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFFE53935), width: 2),
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
+            ),
+            const SizedBox(height: 16),
+
+            // Grid or "No results" message
+            Expanded(
+              child: _filteredEmergencies.isEmpty
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off, size: 64, color: Colors.grey),
+                          SizedBox(height: 12),
+                          Text(
+                            'No emergency found',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
+                  : GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      children: _filteredEmergencies
+                          .map((e) => _buildEmergencyCard(
+                                context,
+                                title: e['title'] as String,
+                                icon: e['icon'] as IconData,
+                                color: e['color'] as Color,
+                              ))
+                          .toList(),
+                    ),
             ),
           ],
         ),
       ),
-      
+
       // Emergency Call Button (Floating)
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
@@ -141,7 +193,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Emergency Card Widget
   Widget _buildEmergencyCard(
     BuildContext context, {
     required String title,
@@ -150,19 +201,16 @@ class HomeScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        // Find the emergency from sample data
-          final emergencies = getSampleEmergencies();
-          final emergency = emergencies.firstWhere(
-            (e) => e.name == title,
-          );
-          
-          // Navigate to detail screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EmergencyDetailScreen(emergency: emergency),
-            ),
-          );
+        final emergencies = getSampleEmergencies();
+        final emergency = emergencies.firstWhere(
+          (e) => e.name == title,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmergencyDetailScreen(emergency: emergency),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -180,22 +228,15 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: color,
-              ),
+              child: Icon(icon, size: 48, color: color),
             ),
             const SizedBox(height: 12),
-            
-            // Title
             Text(
               title,
               style: TextStyle(
