@@ -3,12 +3,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
 import 'screens/disclaimer_screen.dart';
 import 'services/permission_service.dart';
+import 'services/database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await PermissionService.requestAppPermissions();
+// Initialize database
+  await DatabaseService.database;
   
+  await PermissionService.requestAppPermissions();
+
   // Check if disclaimer was already accepted
   final prefs = await SharedPreferences.getInstance();
   final disclaimerAccepted = prefs.getBool('disclaimer_accepted') ?? false;
