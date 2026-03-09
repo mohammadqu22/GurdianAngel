@@ -51,6 +51,9 @@ dependencies:
 
   # Permission handling
   permission_handler: ^11.3.1
+  
+ # GPS & Location
+  geolocator: ^13.0.2
 
 dev_dependencies:
   flutter_test:

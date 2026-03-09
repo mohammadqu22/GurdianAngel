@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/database_service.dart';
+import '../services/location_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -166,6 +168,102 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _showLocationDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(color: Color(0xFFE53935)),
+            SizedBox(width: 16),
+            Text('Fetching location...'),
+          ],
+        ),
+      ),
+    );
+
+    final position = await LocationService.getCurrentLocation();
+    if (mounted) Navigator.pop(context);
+
+    if (position == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Could not get location. Check GPS settings.')),
+        );
+      }
+      return;
+    }
+
+    final mapsLink = LocationService.getMapsLink(position);
+    final formatted = LocationService.formatLocation(position);
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.location_on, color: Color(0xFFE53935)),
+              SizedBox(width: 8),
+              Text('My Location'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Share this link with someone to show your location:',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(mapsLink,
+                    style: const TextStyle(fontSize: 13)),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Coordinates: $formatted',
+                style:
+                    TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: mapsLink));
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Location link copied! 📋')),
+                );
+              },
+              icon: const Icon(Icons.copy, size: 18),
+              label: const Text('Copy Link'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE53935),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,7 +318,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey[200]!, width: 1),
+                      side:
+                          BorderSide(color: Colors.grey[200]!, width: 1),
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(
@@ -241,17 +340,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      subtitle: Text(_emergencyContact!['phone_number']),
+                      subtitle:
+                          Text(_emergencyContact!['phone_number']),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.phone, color: Colors.green),
+                            icon: const Icon(Icons.phone,
+                                color: Colors.green),
                             onPressed: _callEmergencyContact,
                             tooltip: 'Call contact',
                           ),
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.grey),
+                            icon: const Icon(Icons.edit,
+                                color: Colors.grey),
                             onPressed: _showEmergencyContactDialog,
                             tooltip: 'Edit contact',
                           ),
@@ -263,9 +365,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     icon: Icons.person_add,
                     iconColor: Colors.red,
                     title: 'Add Emergency Contact',
-                    subtitle: 'Save a trusted person to call in emergencies',
+                    subtitle:
+                        'Save a trusted person to call in emergencies',
                     onTap: _showEmergencyContactDialog,
                   ),
+
+            const SizedBox(height: 8),
+
+            // Share Location Card (under Emergency Contact)
+            _buildSettingCard(
+              icon: Icons.location_on,
+              iconColor: Colors.teal,
+              title: 'Share My Location',
+              subtitle:
+                  'Copy your GPS location to share in an emergency',
+              onTap: _showLocationDialog,
+            ),
 
             const SizedBox(height: 32),
 
@@ -298,7 +413,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: BoxDecoration(
                 color: Colors.orange[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange[200]!, width: 1),
+                border:
+                    Border.all(color: Colors.orange[200]!, width: 1),
               ),
               child: Row(
                 children: [
@@ -308,8 +424,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Expanded(
                     child: Text(
                       'This app provides guidance only and does not replace professional medical care.',
-                      style:
-                          TextStyle(fontSize: 13, color: Colors.grey[800]),
+                      style: TextStyle(
+                          fontSize: 13, color: Colors.grey[800]),
                     ),
                   ),
                 ],
@@ -364,7 +480,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           subtitle,
@@ -403,7 +520,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style:
+              const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           subtitle,
@@ -510,7 +628,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                    style:
+                        const TextStyle(fontWeight: FontWeight.w600)),
                 Text(subtitle,
                     style: TextStyle(
                         fontSize: 12, color: Colors.grey[600])),
