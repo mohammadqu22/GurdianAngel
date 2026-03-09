@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../services/database_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,11 +13,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguage = 'English';
   bool _ttsEnabled = true;
+  Map<String, dynamic>? _emergencyContact;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _loadEmergencyContact();
   }
 
   Future<void> _loadSettings() async {
@@ -26,13 +30,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _loadEmergencyContact() async {
+    final contact = await DatabaseService.getEmergencyContact();
+    setState(() {
+      _emergencyContact = contact;
+    });
+  }
+
   Future<void> _saveLanguage(String language) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', language);
     setState(() {
       _selectedLanguage = language;
     });
-    
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -49,6 +59,111 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _ttsEnabled = enabled;
     });
+  }
+
+  void _showEmergencyContactDialog() {
+    final nameController = TextEditingController(
+      text: _emergencyContact?['name'] ?? '',
+    );
+    final phoneController = TextEditingController(
+      text: _emergencyContact?['phone_number'] ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.contact_phone, color: Color(0xFFE53935)),
+            SizedBox(width: 8),
+            Text('Emergency Contact'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: 'Phone Number',
+                prefixIcon: Icon(Icons.phone),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          if (_emergencyContact != null)
+            TextButton(
+              onPressed: () async {
+                await DatabaseService.deleteEmergencyContact();
+                await _loadEmergencyContact();
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Contact deleted')),
+                  );
+                }
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameController.text.trim();
+              final phone = phoneController.text.trim();
+              if (name.isEmpty || phone.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please fill in both fields')),
+                );
+                return;
+              }
+              await DatabaseService.saveEmergencyContact(name, phone);
+              await _loadEmergencyContact();
+              if (mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('$name saved as emergency contact')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE53935),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _callEmergencyContact() async {
+    if (_emergencyContact == null) return;
+    final phone = _emergencyContact!['phone_number'];
+    final Uri callUri = Uri(scheme: 'tel', path: phone);
+    try {
+      await launchUrl(callUri);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open dialer')),
+        );
+      }
+    }
   }
 
   @override
@@ -72,21 +187,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 20),
 
             // Preferences Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Preferences',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
+            _buildSectionHeader('Preferences'),
             const SizedBox(height: 12),
 
-            // Language Setting
             _buildSettingCard(
               icon: Icons.language,
               iconColor: Colors.blue,
@@ -95,7 +198,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => _showLanguageDialog(),
             ),
 
-            // TTS Toggle
             _buildSwitchCard(
               icon: Icons.record_voice_over,
               iconColor: Colors.green,
@@ -107,22 +209,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SizedBox(height: 32),
 
-            // Information Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Information',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
+            // Emergency Contact Section
+            _buildSectionHeader('Emergency Contact'),
             const SizedBox(height: 12),
 
-            // Medical Sources
+            _emergencyContact != null
+                ? Card(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 6),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey[200]!, width: 1),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.contact_phone,
+                            color: Colors.red, size: 24),
+                      ),
+                      title: Text(
+                        _emergencyContact!['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(_emergencyContact!['phone_number']),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.phone, color: Colors.green),
+                            onPressed: _callEmergencyContact,
+                            tooltip: 'Call contact',
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.grey),
+                            onPressed: _showEmergencyContactDialog,
+                            tooltip: 'Edit contact',
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : _buildSettingCard(
+                    icon: Icons.person_add,
+                    iconColor: Colors.red,
+                    title: 'Add Emergency Contact',
+                    subtitle: 'Save a trusted person to call in emergencies',
+                    onTap: _showEmergencyContactDialog,
+                  ),
+
+            const SizedBox(height: 32),
+
+            // Information Section
+            _buildSectionHeader('Information'),
+            const SizedBox(height: 12),
+
             _buildSettingCard(
               icon: Icons.verified_user,
               iconColor: Colors.orange,
@@ -131,7 +281,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => _showMedicalSourcesDialog(),
             ),
 
-            // About App
             _buildSettingCard(
               icon: Icons.info_outline,
               iconColor: Colors.purple,
@@ -149,32 +298,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: BoxDecoration(
                 color: Colors.orange[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.orange[200]!,
-                  width: 1,
-                ),
+                border: Border.all(color: Colors.orange[200]!, width: 1),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange[700],
-                    size: 24,
-                  ),
+                  Icon(Icons.warning_amber_rounded,
+                      color: Colors.orange[700], size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'This app provides guidance only and does not replace professional medical care.',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[800],
-                      ),
+                      style:
+                          TextStyle(fontSize: 13, color: Colors.grey[800]),
                     ),
                   ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[600],
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -196,7 +352,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: ListTile(
         onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -207,22 +364,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: Colors.grey[400],
-        ),
+        trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
       ),
     );
   }
@@ -243,7 +391,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         side: BorderSide(color: Colors.grey[200]!, width: 1),
       ),
       child: SwitchListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         secondary: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -254,17 +403,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         value: value,
         onChanged: onChanged,
@@ -366,14 +509,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
+                Text(title,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text(subtitle,
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.grey[600])),
               ],
             ),
           ),
@@ -406,19 +546,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Version 1.0.0',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            Text('Version 1.0.0',
+                style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 16),
             const Text(
               'An interactive emergency first-aid guide providing step-by-step guidance during medical emergencies.',
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Developed by:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            const Text('Developed by:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             const Text('Mohammad Quttaineh'),
             const Text('Amru Alyan'),
