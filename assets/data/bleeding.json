@@ -1,0 +1,61 @@
+{
+  "id": "bleeding",
+  "title": "Bleeding",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Ensure safety & protect yourself",
+      "instruction": "Make sure the scene is safe. Put on disposable gloves or use a plastic bag to avoid contact with blood. If unavailable, ask the person to apply pressure themselves if able."
+    },
+    {
+      "step": 2,
+      "title": "Call for help",
+      "instruction": "Call 101 immediately if the wound is deep, blood is spurting or flowing continuously, or the amount of blood equals half a soda can or more. Don't move the person unless necessary."
+    },
+    {
+      "step": 3,
+      "title": "Find the source of bleeding",
+      "instruction": "Remove clothing around the wound to locate the source. There may be more than one injury. Remove obvious debris only — do NOT probe the wound or remove large embedded objects."
+    },
+    {
+      "step": 4,
+      "title": "Apply direct pressure",
+      "instruction": "Cover the wound with sterile gauze or a clean cloth. Press firmly and steadily with the palm of your hand. Keep the injured area on a firm surface. Do NOT press on an embedded object — press around it instead."
+    },
+    {
+      "step": 5,
+      "title": "Keep the pressure on",
+      "instruction": "Hold firm pressure continuously until bleeding stops. If blood soaks through, add more gauze on top — do NOT remove the original dressing. Do not stack multiple layers — replace the top layer only."
+    },
+    {
+      "step": 6,
+      "title": "Elevate and bandage",
+      "instruction": "If possible, raise the wounded area above the level of the heart to slow bleeding. Once bleeding stops, wrap the wound with a thick bandage or clean cloth and secure it firmly."
+    },
+    {
+      "step": 7,
+      "title": "Help the person lie down",
+      "instruction": "Have the person lie down on a blanket or rug to prevent body heat loss. If you see signs of shock — pale or clammy skin, rapid weak pulse, dizziness — elevate their feet and keep them calm and still."
+    },
+    {
+      "step": 8,
+      "title": "Use a tourniquet if needed",
+      "instruction": "If bleeding is life-threatening and on an arm or leg, apply a commercial tourniquet above the wound if available and you are trained. Do NOT use improvised tourniquets like scarves or belts. Note the time it was applied and tell emergency services."
+    },
+    {
+      "step": 9,
+      "title": "Monitor until help arrives",
+      "instruction": "Stay with the person. Watch for changes in breathing, responsiveness, or signs of shock. Keep them warm and reassure them. Wash your hands thoroughly after giving care."
+    }
+  ],
+  "warnings": [
+    "Do NOT remove embedded objects from the wound",
+    "Do NOT remove the original dressing — add on top if soaked",
+    "Do NOT use improvised tourniquets like scarves or belts",
+    "Do NOT press directly on a head wound if skull fracture is suspected"
+  ],
+  "sources": [
+    "American Red Cross First Aid Guidelines",
+    "Mayo Clinic First Aid"
+  ]
+}

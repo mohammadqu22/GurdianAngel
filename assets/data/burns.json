@@ -1,0 +1,51 @@
+{
+  "id": "burns",
+  "title": "Burns",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Stop the burning process",
+      "instruction": "Remove the person from the heat source. Remove any clothing or jewelry near the burn — but do NOT remove anything stuck to the skin."
+    },
+    {
+      "step": 2,
+      "title": "Cool the burn",
+      "instruction": "Cool the burn immediately with clean, cool running water for at least 20 minutes. Do NOT use ice, ice water, butter, or oils — they make it worse."
+    },
+    {
+      "step": 3,
+      "title": "Check severity",
+      "instruction": "Is the burn larger than your palm? Does it affect the face, hands, feet, joints, or genitals? Are there blisters, white, brown, or black skin? If yes to any — call emergency services immediately."
+    },
+    {
+      "step": 4,
+      "title": "Call for help if needed",
+      "instruction": "Call emergency services (101) if the burn is severe, covers a large area, involves a child or elderly person, or is a chemical or electrical burn."
+    },
+    {
+      "step": 5,
+      "title": "Cover the burn",
+      "instruction": "Leave the burn uncovered if possible. If you must cover it, use a loose, clean, non-adhesive dressing or plastic wrap. Never use adhesive bandages — they stick to the skin."
+    },
+    {
+      "step": 6,
+      "title": "Manage pain",
+      "instruction": "Give an over-the-counter pain reliever such as acetaminophen or ibuprofen. Apply aloe vera lotion for minor burns only. Encourage the person to drink fluids."
+    },
+    {
+      "step": 7,
+      "title": "Monitor the person",
+      "instruction": "Watch for signs of infection: redness spreading, swelling, pus, or fever. Do NOT break blisters — they protect the skin. Seek medical care if pain persists or condition worsens."
+    }
+  ],
+  "warnings": [
+    "Do NOT use ice or ice water",
+    "Do NOT apply butter, oils, or ointments",
+    "Do NOT break blisters",
+    "Do NOT use adhesive bandages"
+  ],
+  "sources": [
+    "American Red Cross First Aid Guidelines",
+    "Magen David Adom Protocols"
+  ]
+}

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/emergency.dart';
-import 'emergency_detail_screen.dart';
+import 'step_screen.dart';
 import 'settings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -200,15 +199,15 @@ class _HomeScreenState extends State<HomeScreen> {
     required Color color,
   }) {
     return GestureDetector(
-      onTap: () {
-        final emergencies = getSampleEmergencies();
-        final emergency = emergencies.firstWhere(
-          (e) => e.name == title,
-        );
+     onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EmergencyDetailScreen(emergency: emergency),
+            builder: (context) => StepScreen(
+              emergencyId: title.toLowerCase(),
+              emergencyTitle: title,
+              emergencyColor: color,
+            ),
           ),
         );
       },

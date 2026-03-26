@@ -1,0 +1,56 @@
+{
+  "id": "fractures",
+  "title": "Fractures",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Check for danger signs",
+      "instruction": "Call 101 immediately if: the person is unresponsive or not breathing, there is heavy bleeding, the bone is sticking out through the skin, the limb appears deformed, or you suspect a fracture of the head, neck, or spine."
+    },
+    {
+      "step": 2,
+      "title": "Do not move the person",
+      "instruction": "Keep the person as still as possible. Do NOT try to straighten the bone or push a bone back in. Moving the injured area can cause further damage to nerves, blood vessels, and tissue."
+    },
+    {
+      "step": 3,
+      "title": "Stop any bleeding",
+      "instruction": "If there is an open wound, apply firm pressure using a sterile bandage, clean cloth, or clothing. Do not press directly on the bone if it is protruding — press around it instead."
+    },
+    {
+      "step": 4,
+      "title": "Immobilize the injured area",
+      "instruction": "Have the person rest without moving or straightening the injured area. If trained and medical help is delayed, apply a splint above and below the fracture. Pad the splint to reduce pain. Do NOT attempt to realign the bone."
+    },
+    {
+      "step": 5,
+      "title": "Apply a cold pack",
+      "instruction": "Wrap ice or a cold pack in a thin towel and apply it to the injured area to reduce swelling and pain. Apply for no more than 20 minutes at a time. Never apply ice directly to the skin."
+    },
+    {
+      "step": 6,
+      "title": "Watch for shock",
+      "instruction": "If the person feels faint, has pale or clammy skin, or is breathing rapidly — lay them down with their head slightly lower than the trunk. Raise the legs if possible. Keep them warm with a blanket."
+    },
+    {
+      "step": 7,
+      "title": "Check circulation",
+      "instruction": "Check the hand or foot beyond the injury for temperature, color, and feeling. Ask if there is any numbness or tingling. Cold, blue, or numb fingers or toes may indicate a serious injury to blood vessels."
+    },
+    {
+      "step": 8,
+      "title": "Keep them still until help arrives",
+      "instruction": "Reassure the person and keep them calm and warm. Do not give food or water. Monitor breathing and responsiveness. Stay with them until emergency services arrive."
+    }
+  ],
+  "warnings": [
+    "Do NOT try to straighten or realign the bone",
+    "Do NOT push a bone that is sticking out back in",
+    "Do NOT apply ice directly to the skin",
+    "Do NOT move the person if head, neck, or spine injury is suspected"
+  ],
+  "sources": [
+    "American Red Cross First Aid Guidelines",
+    "Mayo Clinic First Aid"
+  ]
+}
