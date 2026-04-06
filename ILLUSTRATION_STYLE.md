@@ -137,7 +137,7 @@ Use this checklist to track illustration completion across all protocols:
 | **Bleeding** | 9 steps | ✅ Complete |
 | **Burns** | 7 steps | ✅ Complete |
 | **Choking (Adult)** | 7 steps | ✅ Complete |
-| **Choking (Infant)** | — | ⬜ Pending |
+| **Choking (Infant)** | 7 steps | ✅ Complete |
 | **CPR (Adult)** | 9 steps | ✅ Complete |
 | **CPR (Infant)** | 7 steps | ✅ Complete |
 | **Fracture** | 8 steps | ✅ Complete |
@@ -149,16 +149,24 @@ Use this checklist to track illustration completion across all protocols:
 
 ## 8. File Naming Convention
 
-Illustration assets must follow this naming pattern:
+Illustration assets use one of two naming patterns depending on the protocol:
 
+**Prefixed** (protocol name included in filename):
 ```
 assets/images/{protocol}/{protocol}_step_{N}.png
 ```
+Used by: `cpr`, `cpr_infant`, `choking_infant`, `seizures`
+
+**Simple** (no prefix):
+```
+assets/images/{protocol}/step_{N}.png
+```
+Used by: `bleeding`, `burns`, `choking`, `fractures`
 
 **Examples:**
-- `assets/images/bleeding/bleeding_step_1.png`
-- `assets/images/burns/burns_step_3.png`
+- `assets/images/bleeding/step_1.png`
 - `assets/images/cpr/cpr_step_2.png`
+- `assets/images/cpr_infant/cpr_infant_step_3.png`
 
 All images should be **PNG format**, minimum **512×512px**, exported at **2x** for Retina displays.
 

@@ -185,7 +185,7 @@ class DisclaimerScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       Center(
                         child: Text(
-                          'Guardian Angel v1.0.4 • Clinical Sentinel UI',
+                          'Guardian Angel v1.0.0 • Clinical Sentinel UI',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: cs.outline,
                           ),

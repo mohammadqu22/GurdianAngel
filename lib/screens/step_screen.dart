@@ -38,8 +38,16 @@ class _StepScreenState extends State<StepScreen> {
       final String data = await rootBundle
           .loadString('assets/data/${widget.emergencyId}.json');
       final Map<String, dynamic> json = jsonDecode(data);
+      final steps = json['steps'];
+      if (steps == null || (steps as List).isEmpty) {
+        setState(() {
+          _errorMessage = 'Protocol data is invalid. Please reinstall the app.';
+          _loading = false;
+        });
+        return;
+      }
       setState(() {
-        _steps = json['steps'];
+        _steps = steps;
         _warnings = json['warnings'] ?? [];
         _loading = false;
       });
