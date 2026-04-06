@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
+import '../core/app_theme.dart';
 
 class DisclaimerScreen extends StatelessWidget {
-  const DisclaimerScreen({super.key});
+  const DisclaimerScreen({super.key, required this.onThemeModeChanged});
+
+  final ValueChanged<ThemeMode> onThemeModeChanged;
 
   Future<void> _acceptDisclaimer(BuildContext context) async {
-    // Save that user has seen disclaimer
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('disclaimer_accepted', true);
-    
-    // Navigate to home screen
+
     if (context.mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(onThemeModeChanged: onThemeModeChanged),
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
               Expanded(
@@ -33,39 +39,37 @@ class DisclaimerScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
-                      
-                      // App Icon and Title
+                      const SizedBox(height: 32),
+
+                      // ── App Icon and Title ──
                       Center(
                         child: Column(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE53935).withOpacity(0.1),
+                                color: cs.primary.withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.medical_services,
-                                size: 60,
-                                color: Color(0xFFE53935),
+                                size: 56,
+                                color: cs.primary,
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
+                            const SizedBox(height: 20),
+                            Text(
                               'Guardian Angel',
-                              style: TextStyle(
-                                fontSize: 28,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: cs.primary,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFFE53935),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Text(
                               'Emergency First Aid Guide',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: cs.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -74,33 +78,38 @@ class DisclaimerScreen extends StatelessWidget {
 
                       const SizedBox(height: 40),
 
-                      // Warning Header
+                      // ── Important Notice ──
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.orange[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.orange[300]!,
-                            width: 2,
-                          ),
+                          color: cs.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
                         ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              Icons.warning_amber_rounded,
-                              color: Colors.orange[700],
-                              size: 32,
+                            Text(
+                              'IMPORTANT MEDICAL NOTICE',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: cs.primary,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'IMPORTANT MEDICAL DISCLAIMER',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange[900],
-                                ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'This application is a decision-support tool and DOES NOT replace professional medical care, diagnosis, or treatment.',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: cs.onSurface,
+                                height: 1.6,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'In the event of a life-threatening emergency, always contact your local emergency services (101) immediately.',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: cs.onSurface,
+                                height: 1.6,
                               ),
                             ),
                           ],
@@ -109,99 +118,77 @@ class DisclaimerScreen extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
-                      // Main Disclaimer Text
-                      const Text(
-                        'This Application Provides Guidance Only',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Guardian Angel provides first-aid guidance based on established medical protocols. However, this app is NOT a substitute for professional medical advice, diagnosis, or treatment.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.6,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Emergency Instructions
+                      // ── Emergency Instructions ──
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE53935).withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFFE53935).withOpacity(0.3),
-                            width: 1,
-                          ),
+                          color: cs.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              children: const [
-                                Icon(
-                                  Icons.phone_in_talk,
-                                  color: Color(0xFFE53935),
-                                  size: 24,
-                                ),
-                                SizedBox(width: 8),
+                              children: [
+                                Icon(Icons.phone_in_talk, color: cs.primary, size: 24),
+                                const SizedBox(width: 10),
                                 Text(
                                   'In Case of Emergency:',
-                                  style: TextStyle(
-                                    fontSize: 18,
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFFE53935),
+                                    color: cs.primary,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
-                            _buildBulletPoint('Call 101 (Magen David Adom) immediately'),
-                            _buildBulletPoint('Use this app as a guide while waiting for help'),
-                            _buildBulletPoint('Seek professional medical attention after first aid'),
+                            const SizedBox(height: 16),
+                            _buildBulletPoint(context, 'Call 101 (Magen David Adom) immediately'),
+                            _buildBulletPoint(context, 'Use this app as a guide while waiting for help'),
+                            _buildBulletPoint(context, 'Seek professional medical attention after first aid'),
                           ],
                         ),
                       ),
 
                       const SizedBox(height: 24),
 
-                      // Medical Sources
-                      const Text(
-                        'Medical Content Sources:',
-                        style: TextStyle(
-                          fontSize: 18,
+                      // ── Medical Sources ──
+                      Text(
+                        'Verified Medical Sources',
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _buildSourceItem('American Red Cross - First Aid Guidelines'),
-                      _buildSourceItem('World Health Organization - Emergency Care'),
-                      _buildSourceItem('American Heart Association - CPR Standards'),
-                      _buildSourceItem('Magen David Adom - Israeli Emergency Protocols'),
+                      const SizedBox(height: 16),
+                      _buildSourceItem(context, 'American Red Cross — First Aid Guidelines'),
+                      _buildSourceItem(context, 'World Health Organization — Emergency Care'),
+                      _buildSourceItem(context, 'American Heart Association — CPR Standards'),
+                      _buildSourceItem(context, 'Magen David Adom — Israeli Emergency Protocols'),
 
                       const SizedBox(height: 24),
 
-                      // Legal Notice
+                      // ── Legal Notice ──
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8),
+                          color: cs.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                         child: Text(
                           'By continuing, you acknowledge that this guidance does not replace emergency medical services and that you will call 101 for serious medical situations.',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[700],
-                            height: 1.4,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            height: 1.5,
                           ),
                           textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Center(
+                        child: Text(
+                          'Guardian Angel v1.0.4 • Clinical Sentinel UI',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: cs.outline,
+                          ),
                         ),
                       ),
                     ],
@@ -211,25 +198,39 @@ class DisclaimerScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Accept Button
-              SizedBox(
+              // ── Accept Button — gradient CTA ──
+              Container(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => _acceptDisclaimer(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE53935),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 3,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: const Alignment(-0.97, -0.26),
+                    end: const Alignment(0.97, 0.26),
+                    colors: [cs.primary, cs.primaryContainer],
                   ),
-                  child: const Text(
-                    'I Understand - Continue to App',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  boxShadow: [
+                    BoxShadow(
+                      color: cs.onSurface.withValues(alpha: 0.08),
+                      offset: const Offset(0, 16),
+                      blurRadius: 40,
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    onTap: () => _acceptDisclaimer(context),
+                    child: Center(
+                      child: Text(
+                        'I UNDERSTAND — CONTINUE',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: cs.onPrimary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -241,24 +242,29 @@ class DisclaimerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletPoint(String text) {
+  Widget _buildBulletPoint(BuildContext context, String text) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.check_circle,
-            color: Color(0xFFE53935),
-            size: 20,
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: cs.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.check, color: cs.primary, size: 14),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[800],
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: cs.onSurface,
               ),
             ),
           ),
@@ -267,24 +273,20 @@ class DisclaimerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSourceItem(String source) {
+  Widget _buildSourceItem(BuildContext context, String source) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.verified,
-            color: Colors.blue[600],
-            size: 18,
-          ),
-          const SizedBox(width: 8),
+          Icon(Icons.verified, color: cs.tertiary, size: 18),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               source,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: cs.onSurface,
               ),
             ),
           ),

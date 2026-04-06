@@ -5,36 +5,43 @@
     {
       "step": 1,
       "title": "Call for help immediately if needed",
+      "image": "assets/images/seizures/seizures_step_1.png",
       "instruction": "Call 101 if: the seizure lasts more than 5 minutes, there is more than one seizure in a row, the person is injured, the seizure happens in water, it is their first ever seizure, or the person does not regain consciousness."
     },
     {
       "step": 2,
       "title": "Stay calm and let it run its course",
+      "image": "assets/images/seizures/seizures_step_2.png",
       "instruction": "Do NOT try to hold the person down or stop their movements. Seizures cannot be stopped by restraint and attempting to do so can cause injury to both you and the person."
     },
     {
       "step": 3,
       "title": "Protect them from injury",
+      "image": "assets/images/seizures/seizures_step_3.png",
       "instruction": "Clear the area around the person. Move any hard, sharp, or dangerous objects away. If possible, place something soft under their head. Loosen any tight clothing around the neck."
     },
     {
       "step": 4,
       "title": "Turn them on their side",
+      "image": "assets/images/seizures/seizures_step_4.png",
       "instruction": "If possible and safe to do so, gently turn the person onto their side into the recovery position. This prevents choking if they vomit and keeps the airway clear. Do not force this if it causes resistance."
     },
     {
       "step": 5,
       "title": "Monitor during the seizure",
+      "image": "assets/images/seizures/seizures_step_5.png",
       "instruction": "Stay with the person and watch carefully. Note how long the seizure lasts. Check for responsiveness and breathing if safe to do so. Time the seizure from when it starts."
     },
     {
       "step": 6,
       "title": "After the seizure ends",
+      "image": "assets/images/seizures/seizures_step_6.png",
       "instruction": "Check if the person is breathing. If unresponsive and not breathing, begin CPR immediately. If breathing, keep them in the recovery position on their side. They may be drowsy and confused for up to 20 minutes — this is normal."
     },
     {
       "step": 7,
       "title": "Reassure and stay with them",
+      "image": "assets/images/seizures/seizures_step_7.png",
       "instruction": "Stay with the person until they are fully awake and aware of their surroundings. Speak calmly and reassuringly. Keep them warm and comfortable. Do not give food or water until fully alert."
     }
   ],

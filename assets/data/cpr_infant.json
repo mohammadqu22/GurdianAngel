@@ -1,0 +1,58 @@
+{
+  "id": "cpr_infant",
+  "title": "CPR (Infant)",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Check responsiveness",
+      "instruction": "Tap the bottom of the foot and shout 'Are you OK?' Check for breathing for 5-10 seconds. If no response and no breathing, act immediately.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_1.png"
+    },
+    {
+      "step": 2,
+      "title": "Call 101 and get an AED",
+      "instruction": "If alone, shout for help. If someone is there, have them call 101 and find an AED. If alone and no phone, perform 2 minutes of CPR before calling.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_2.png"
+    },
+    {
+      "step": 3,
+      "title": "Chest compressions (30:2)",
+      "instruction": "Place the infant on a firm, flat surface. Use the two-thumb-encircling hands technique (preferred) or the heel of one hand in the center of the chest. Push hard and fast — 1.5 inches deep, 100-120 per minute.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_3.png"
+    },
+    {
+      "step": 4,
+      "title": "Open the airway",
+      "instruction": "Tilt the head back to a 'neutral' or 'sniffing' position. Do NOT over-tilt as it can block an infant’s narrow airway.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_4.png"
+    },
+    {
+      "step": 5,
+      "title": "Give 2 rescue breaths",
+      "instruction": "Cover BOTH the nose and mouth with your mouth. Give 2 gentle breaths (only enough to see the chest rise). Each breath should last 1 second.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_5.png"
+    },
+    {
+      "step": 6,
+      "title": "Continue cycles",
+      "instruction": "Continue sets of 30 compressions followed by 2 breaths. Minimize interruptions. Change rescuers every 2 minutes to prevent fatigue.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_3.png"
+    },
+    {
+      "step": 7,
+      "title": "AED Use (if available)",
+      "instruction": "Apply pediatric pads as soon as available (one on chest, one on back if needed for infants). Follow voice prompts. Immediately resume CPR after any shock.",
+      "image": "assets/images/cpr_infant/cpr_infant_step_7.png"
+    }
+  ],
+  "warnings": [
+    "Do NOT over-tilt the head — keep it in a neutral position",
+    "Do NOT blow too hard — give only small, gentle puffs of air",
+    "Do NOT use two-finger technique if you can use encircling thumbs or one-hand heel",
+    "Do NOT delay starting compressions"
+  ],
+  "sources": [
+    "American Heart Association 2025 CPR Update",
+    "Magen David Adom Pediatric Life Support"
+  ]
+}

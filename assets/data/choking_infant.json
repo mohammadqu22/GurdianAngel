@@ -1,0 +1,58 @@
+{
+  "id": "choking_infant",
+  "title": "Choking (Infant)",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Check if they can cry or cough",
+      "instruction": "If the infant can cry, cough, or breathe — let them keep coughing. Do NOT intervene yet. Monitoring carefully is key. If they stop making noise, act immediately.",
+      "image": "assets/images/choking_infant/choking_infant_step_1.png"
+    },
+    {
+      "step": 2,
+      "title": "Position for back blows",
+      "instruction": "Place the infant facedown on your forearm, resting on your thigh. Support their head by holding the jaw (not neck). Keep the head lower than the chest.",
+      "image": "assets/images/choking_infant/choking_infant_step_2.png"
+    },
+    {
+      "step": 3,
+      "title": "Give 5 back blows",
+      "instruction": "Give 5 firm, distinct back blows between the shoulder blades using the heel of your hand. Gravity helps the object drop out.",
+      "image": "assets/images/choking_infant/choking_infant_step_3.png"
+    },
+    {
+      "step": 4,
+      "title": "Position for chest thrusts",
+      "instruction": "Sandwich the infant between your forearms and turn them face-up. Support the back of the head. Keep the head lower than the chest on your lap/thigh.",
+      "image": "assets/images/choking_infant/choking_infant_step_4.png"
+    },
+    {
+      "step": 5,
+      "title": "Give 5 chest thrusts",
+      "instruction": "Give 5 quick, firm chest thrusts in the center of the chest (just below the nipple line) using the heel of one hand. Allow the chest to recoil between thrusts.",
+      "image": "assets/images/choking_infant/choking_infant_step_5.png"
+    },
+    {
+      "step": 6,
+      "title": "Alternate and repeat",
+      "instruction": "Keep alternating 5 back blows and 5 chest thrusts until the object is forced out, the infant starts to cry/breathe, or they become unresponsive.",
+      "image": "assets/images/choking_infant/choking_infant_step_6.png"
+    },
+    {
+      "step": 7,
+      "title": "If they become unresponsive",
+      "instruction": "Stop and lower them to a flat, firm surface. Call 101 immediately if not already done. Begin 30:2 CPR. Check the mouth for the object during breaths — only remove if seen. NO blind finger sweeps.",
+      "image": "assets/images/choking_infant/choking_infant_step_7.png"
+    }
+  ],
+  "warnings": [
+    "Do NOT perform abdominal thrusts (Heimlich maneuver) on infants",
+    "Do NOT do blind finger sweeps — it can push objects deeper",
+    "Do NOT hang the infant by their feet",
+    "Do NOT squeeze the throat or neck while supporting the head"
+  ],
+  "sources": [
+    "American Heart Association 2025 Guidelines",
+    "Magen David Adom Infant First Aid Protocols"
+  ]
+}
