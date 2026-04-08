@@ -523,29 +523,36 @@ class _StepScreenState extends State<StepScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                ..._warnings.map((w) => Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: dialogCs.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.do_not_disturb, color: dialogCs.primary, size: 20),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              w,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: dialogCs.onSurface,
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _warnings.map((w) => Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: dialogCs.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.do_not_disturb, color: dialogCs.primary, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                w,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: dialogCs.onSurface,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )),
+                          ],
+                        ),
+                      )).toList(),
+                    ),
+                  ),
+                ),
 
                 const SizedBox(height: 8),
                 Align(

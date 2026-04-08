@@ -81,8 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   // Settings icon — tonal surface circle
-                  GestureDetector(
-                    onTap: () {
+                  IconButton(
+                    tooltip: 'Settings',
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -92,18 +93,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: cs.surfaceContainerLow,
+                    style: IconButton.styleFrom(
+                      backgroundColor: cs.surfaceContainerLow,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
-                      child: Icon(
-                        Icons.settings_outlined,
-                        color: cs.onSurface,
-                        size: 24,
-                      ),
+                      fixedSize: const Size(48, 48),
+                    ),
+                    icon: Icon(
+                      Icons.settings_outlined,
+                      color: cs.onSurface,
+                      size: 24,
                     ),
                   ),
                 ],
@@ -185,7 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Builder(
         builder: (context) {
           final fabCs = Theme.of(context).colorScheme;
-          return Container(
+          return Semantics(
+            button: true,
+            label: 'Call emergency services on 101',
+            child: Container(
             height: 64,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -241,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          );
+          ),
+        );
         },
       ),
     );

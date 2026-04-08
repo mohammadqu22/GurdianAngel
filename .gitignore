@@ -46,3 +46,6 @@ app.*.map.json
 
 # macOS desktop (not a target platform)
 macos/
+
+# Web (not a target platform)
+web/
