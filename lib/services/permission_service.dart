@@ -1,12 +1,22 @@
+import 'dart:io' show Platform;
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService {
   // Request all permissions the app needs
   static Future<void> requestAppPermissions() async {
-    await [
-      Permission.phone,
-      Permission.location,
-    ].request();
+    try {
+      if (Platform.isIOS) {
+        // On iOS, only request location (phone permission doesn't exist)
+        await Permission.location.request();
+      } else {
+        await [
+          Permission.phone,
+          Permission.location,
+        ].request();
+      }
+    } catch (e) {
+      // Silently handle — permissions will be requested when needed
+    }
   }
 
   // Check if phone permission is granted

@@ -5,48 +5,58 @@
     {
       "step": 1,
       "title": "Check the scene & the person",
-      "instruction": "Make sure the scene is safe. Tap the person's shoulder and shout 'Are you OK?' If there is no response, no breathing, or only gasping — act immediately."
+      "instruction": "Make sure the scene is safe. Tap the person's shoulder and shout 'Are you OK?' If there is no response, no breathing, or only gasping — act immediately.",
+      "image": "assets/images/cpr/cpr_step_1.png"
     },
     {
       "step": 2,
       "title": "Call for help",
-      "instruction": "Call 101 immediately or tell someone nearby to call while you begin CPR. If alone, call first then start CPR. Get an AED if one is available nearby."
+      "instruction": "Call 101 immediately or tell someone nearby to call while you begin CPR. If alone, call first then start CPR. Get an AED if one is available nearby.",
+      "image": "assets/images/cpr/cpr_step_2.png"
     },
     {
       "step": 3,
       "title": "Position the person",
-      "instruction": "Place the person on their back on a firm, flat surface. Kneel beside them. Make sure their arms are at their sides."
+      "instruction": "Place the person on their back on a firm, flat surface. Kneel beside them. Make sure their arms are at their sides.",
+      "image": "assets/images/cpr/cpr_step_3.png"
     },
     {
       "step": 4,
       "title": "Hand position for compressions",
-      "instruction": "Place the lower palm of one hand on the center of the chest, between the nipples. Place your other hand on top. Keep elbows straight and shoulders directly above your hands."
+      "instruction": "Place the lower palm of one hand on the center of the chest, between the nipples. Place your other hand on top. Keep elbows straight and shoulders directly above your hands.",
+      "image": "assets/images/cpr/cpr_step_4.png"
     },
     {
       "step": 5,
       "title": "Give 30 chest compressions",
-      "instruction": "Push hard and fast — at least 2 inches (5 cm) deep. Do 100 to 120 compressions per minute. Think of the beat of 'Stayin' Alive'. Allow the chest to fully rise between each compression. Count aloud: 1, 2, 3... 30."
+      "instruction": "Push hard and fast — at least 2 inches (5 cm) deep. Do 100 to 120 compressions per minute. Think of the beat of 'Stayin' Alive'. Allow the chest to fully rise between each compression. Count aloud: 1, 2, 3... 30.",
+      "image": "assets/images/cpr/cpr_step_5.png"
     },
     {
       "step": 6,
       "title": "Open the airway",
-      "instruction": "If trained in CPR: tilt the head back gently with one hand on the forehead. With the other hand, lift the chin forward to open the airway."
+      "instruction": "If trained in CPR: tilt the head back gently with one hand on the forehead. With the other hand, lift the chin forward to open the airway.",
+      "image": "assets/images/cpr/cpr_step_6.png"
     },
     {
       "step": 7,
       "title": "Give 2 rescue breaths",
-      "instruction": "Pinch the nose shut. Make a complete seal over their mouth with yours. Give 1 breath lasting 1 second — watch for the chest to rise. Give a second breath. If chest does not rise, retilt the head and try again. If not trained, skip breaths and continue compressions only."
+      "instruction": "Pinch the nose shut. Make a complete seal over their mouth with yours. Give 1 breath lasting 1 second — watch for the chest to rise. Give a second breath. If chest does not rise, retilt the head and try again. If not trained, skip breaths and continue compressions only.",
+      "image": "assets/images/cpr/cpr_step_7.png"
     },
     {
       "step": 8,
       "title": "Continue cycles",
-      "instruction": "Continue cycles of 30 compressions and 2 breaths. Do not stop for more than 10 seconds. Keep going until the person shows signs of life, an AED is ready to use, or emergency services take over."
+      "instruction": "Continue cycles of 30 compressions and 2 breaths. Do not stop for more than 10 seconds. Keep going until the person shows signs of life, an AED is ready to use, or emergency services take over.",
+      "image": "assets/images/cpr/cpr_step_8.png"
     },
     {
       "step": 9,
       "title": "Use AED if available",
-      "instruction": "As soon as an AED is available, turn it on and follow its voice instructions. Give one shock if advised, then immediately resume CPR for 2 more minutes before the next shock."
+      "instruction": "As soon as an AED is available, turn it on and follow its voice instructions. Give one shock if advised, then immediately resume CPR for 2 more minutes before the next shock.",
+      "image": "assets/images/cpr/cpr_step_9.png"
     }
+
   ],
   "warnings": [
     "Do NOT stop compressions for more than 10 seconds",

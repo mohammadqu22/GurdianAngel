@@ -5,37 +5,44 @@
     {
       "step": 1,
       "title": "Check if they can cough",
-      "instruction": "If the person can cough forcefully, talk, or breathe — let them keep coughing. Do NOT intervene yet. Stay close and watch their condition carefully."
+      "instruction": "If the person can cough forcefully, talk, or breathe — let them keep coughing. Do NOT intervene yet. Stay close and watch their condition carefully.",
+      "image": "assets/images/choking/step_1.png"
     },
     {
       "step": 2,
       "title": "Call for help",
-      "instruction": "If the person CANNOT cough, talk, cry or breathe — act immediately. Ask someone nearby to call emergency services (101) while you give first aid. If alone, call first then help."
+      "instruction": "If the person CANNOT cough, talk, cry or breathe — act immediately. Ask someone nearby to call emergency services (101) while you give first aid. If alone, call first then help.",
+      "image": "assets/images/choking/step_2.png"
     },
     {
       "step": 3,
       "title": "Give 5 back blows",
-      "instruction": "Stand to the side and slightly behind the person. Place one arm across their chest for support. Bend them forward at the waist. Strike firmly 5 times between the shoulder blades using the heel of your hand."
+      "instruction": "Stand to the side and slightly behind the person. Place one arm across their chest for support. Bend them forward at the waist. Strike firmly 5 times between the shoulder blades using the heel of your hand.",
+      "image": "assets/images/choking/step_3.png"
     },
     {
       "step": 4,
       "title": "Give 5 abdominal thrusts (Heimlich)",
-      "instruction": "Stand behind the person with one foot forward for balance. Make a fist and place it just above the navel. Grab your fist with your other hand. Press inward and upward with 5 quick, firm thrusts."
+      "instruction": "Stand behind the person with one foot forward for balance. Make a fist and place it just above the navel. Grab your fist with your other hand. Press inward and upward with 5 quick, firm thrusts.",
+      "image": "assets/images/choking/step_4.png"
     },
     {
       "step": 5,
       "title": "Alternate and repeat",
-      "instruction": "Keep alternating between 5 back blows and 5 abdominal thrusts until the object is dislodged, the person can breathe or cough forcefully, or they become unconscious."
+      "instruction": "Keep alternating between 5 back blows and 5 abdominal thrusts until the object is dislodged, the person can breathe or cough forcefully, or they become unconscious.",
+      "image": "assets/images/choking/step_5.png"
     },
     {
       "step": 6,
       "title": "If they become unconscious",
-      "instruction": "Lower the person carefully to the floor. Call 101 immediately if not already done. Look inside the mouth — if you can SEE the object, remove it with a finger sweep. NEVER do a blind finger sweep. Begin CPR immediately."
+      "instruction": "Lower the person carefully to the floor. Call 101 immediately if not already done. Look inside the mouth — if you can SEE the object, remove it with a finger sweep. NEVER do a blind finger sweep. Begin CPR immediately.",
+      "image": "assets/images/choking/step_6.png"
     },
     {
       "step": 7,
       "title": "Special cases",
-      "instruction": "If the person is pregnant or too large to wrap your arms around — use chest thrusts instead. Place your hands at the base of the breastbone and press hard inward with quick thrusts."
+      "instruction": "If the person is pregnant or too large to wrap your arms around — use chest thrusts instead. Place your hands at the base of the breastbone and press hard inward with quick thrusts.",
+      "image": "assets/images/choking/step_7.png"
     }
   ],
   "warnings": [

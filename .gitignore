@@ -44,7 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# macOS CocoaPods (macOS desktop is not a target platform)
-macos/Podfile
-macos/Podfile.lock
-macos/Pods/
+# macOS desktop (not a target platform)
+macos/
+
+# Web (not a target platform)
+web/
