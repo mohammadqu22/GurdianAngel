@@ -63,6 +63,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       default: value = 'system';
     }
     await prefs.setString('theme_mode', value);
+    if (!mounted) return;
     setState(() => _themeMode = mode);
     widget.onThemeModeChanged(mode);
   }
