@@ -30,6 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       _selectedLanguage = prefs.getString('language') ?? 'English';
       _ttsEnabled = prefs.getBool('tts_enabled') ?? true;
@@ -68,6 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadEmergencyContact() async {
     final contact = await DatabaseService.getEmergencyContact();
+    if (!mounted) return;
     setState(() {
       _emergencyContact = contact;
     });
@@ -369,9 +371,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                             onTap: () {
+                              final messenger = ScaffoldMessenger.of(context);
                               Clipboard.setData(ClipboardData(text: mapsLink));
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              messenger.showSnackBar(
                                 const SnackBar(
                                     content: Text('Location link copied! 📋')),
                               );

@@ -40,18 +40,21 @@ class _StepScreenState extends State<StepScreen> {
       final Map<String, dynamic> json = jsonDecode(data);
       final steps = json['steps'];
       if (steps == null || (steps as List).isEmpty) {
+        if (!mounted) return;
         setState(() {
           _errorMessage = 'Protocol data is invalid. Please reinstall the app.';
           _loading = false;
         });
         return;
       }
+      if (!mounted) return;
       setState(() {
         _steps = steps;
         _warnings = json['warnings'] ?? [];
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = 'Failed to load protocol. Please restart the app.';
         _loading = false;
