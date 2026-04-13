@@ -1,0 +1,362 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appName => 'Guardian Angel';
+
+  @override
+  String get homeSubtitle => 'Emergency Response';
+
+  @override
+  String get homeSelectEmergency => 'Select Emergency Type';
+
+  @override
+  String get homeSearchHint => 'Search emergency...';
+
+  @override
+  String get homeNoResults => 'No emergency found';
+
+  @override
+  String get homeCallBtn => 'CALL 101';
+
+  @override
+  String get homeCallFailed =>
+      'Could not open dialer. Please call 101 manually.';
+
+  @override
+  String get homeSettingsTooltip => 'Settings';
+
+  @override
+  String get emergencyChoking => 'Choking';
+
+  @override
+  String get emergencyChokingInfant => 'Choking (Infant)';
+
+  @override
+  String get emergencyCPR => 'CPR';
+
+  @override
+  String get emergencyCPRInfant => 'CPR (Infant)';
+
+  @override
+  String get emergencyBurns => 'Burns';
+
+  @override
+  String get emergencyBleeding => 'Bleeding';
+
+  @override
+  String get emergencyFractures => 'Fractures';
+
+  @override
+  String get emergencySeizures => 'Seizures';
+
+  @override
+  String stepProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get stepNext => 'NEXT STEP';
+
+  @override
+  String get stepDone => 'DONE';
+
+  @override
+  String get stepPrevious => 'Previous';
+
+  @override
+  String get stepWarningsBtn => 'View important warnings';
+
+  @override
+  String get stepWarningsTitle => 'IMPORTANT WARNINGS';
+
+  @override
+  String get stepWarningsGotIt => 'GOT IT';
+
+  @override
+  String get stepErrorInvalid =>
+      'Protocol data is invalid. Please reinstall the app.';
+
+  @override
+  String get stepErrorFailed =>
+      'Failed to load protocol. Please restart the app.';
+
+  @override
+  String get stepCompleteTitle => 'TREATMENT COMPLETE';
+
+  @override
+  String stepCompleteBody(String emergencyTitle) {
+    return 'All protocol steps have been successfully administered for $emergencyTitle.';
+  }
+
+  @override
+  String get stepCompleteVitalsTitle => 'Monitor Patient Vitals';
+
+  @override
+  String get stepCompleteVitalsBody =>
+      'Maintain clinical observation. Ensure the patient remains warm and avoid sudden movements while waiting for medical staff arrival.';
+
+  @override
+  String get stepCompleteDisclaimer =>
+      'This app does not replace professional medical care. Seek a doctor if needed.';
+
+  @override
+  String get stepCompleteBackBtn => 'BACK TO HOME';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsSubtitle => 'Configure your life-saving assistant.';
+
+  @override
+  String get settingsSectionPreferences => 'Preferences';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsTheme => 'App Theme';
+
+  @override
+  String get settingsVoiceGuidance => 'Voice Guidance';
+
+  @override
+  String get settingsTtsSubtitle => 'TTS Audio Instructions';
+
+  @override
+  String get settingsSectionEmergencyContact => 'Emergency Contact';
+
+  @override
+  String get settingsAddContact => 'Add Emergency Contact';
+
+  @override
+  String get settingsAddContactSubtitle =>
+      'Save a trusted person to call in emergencies';
+
+  @override
+  String get settingsSectionLocation => 'Location Tools';
+
+  @override
+  String get settingsShareLocation => 'Share My Location';
+
+  @override
+  String get settingsShareLocationSubtitle =>
+      'Live updates with emergency services';
+
+  @override
+  String get settingsSectionInfo => 'Information';
+
+  @override
+  String get settingsMedicalSources => 'Medical Sources';
+
+  @override
+  String get settingsMedicalSourcesSubtitle => 'View our verified sources';
+
+  @override
+  String get settingsAbout => 'About Guardian Angel';
+
+  @override
+  String get settingsAboutSubtitle => 'App information & version';
+
+  @override
+  String get settingsDisclaimerTitle => 'Medical Disclaimer';
+
+  @override
+  String get settingsDisclaimerBody =>
+      'This application is an educational and supportive tool. It does not replace professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions regarding a medical condition. In case of a life-threatening emergency, call your local emergency services immediately.';
+
+  @override
+  String get settingsSelectLanguage => 'Select Language';
+
+  @override
+  String get settingsCancel => 'Cancel';
+
+  @override
+  String get settingsClose => 'Close';
+
+  @override
+  String get settingsThemeDialogTitle => 'App Theme';
+
+  @override
+  String get settingsThemeSystem => 'System Default';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsContactDialogTitle => 'Emergency Contact';
+
+  @override
+  String get settingsContactName => 'Name';
+
+  @override
+  String get settingsContactPhone => 'Phone Number';
+
+  @override
+  String get settingsContactDelete => 'Delete';
+
+  @override
+  String get settingsContactSave => 'SAVE';
+
+  @override
+  String get settingsContactValidation => 'Please fill in both fields';
+
+  @override
+  String get settingsContactDeleted => 'Contact deleted';
+
+  @override
+  String settingsContactSaved(String name) {
+    return '$name saved as emergency contact';
+  }
+
+  @override
+  String get settingsCallFailed => 'Could not open dialer';
+
+  @override
+  String get settingsCallContactTooltip => 'Call contact';
+
+  @override
+  String get settingsEditContactTooltip => 'Edit contact';
+
+  @override
+  String get settingsLocationFetching => 'Fetching location...';
+
+  @override
+  String get settingsLocationFailed =>
+      'Could not get location. Check GPS settings.';
+
+  @override
+  String get settingsLocationDialogTitle => 'My Location';
+
+  @override
+  String get settingsLocationShareHint =>
+      'Share this link with someone to show your location:';
+
+  @override
+  String settingsLocationCoords(String coords) {
+    return 'Coordinates: $coords';
+  }
+
+  @override
+  String get settingsLocationCopy => 'Copy Link';
+
+  @override
+  String get settingsLocationCopied => 'Location link copied! 📋';
+
+  @override
+  String get settingsSourcesDialogTitle => 'Medical Sources';
+
+  @override
+  String get settingsSourcesIntro =>
+      'All emergency procedures are based on verified sources:';
+
+  @override
+  String get settingsSourcesRedCrossTitle => 'American Red Cross';
+
+  @override
+  String get settingsSourcesRedCrossSubtitle => 'First Aid Guidelines';
+
+  @override
+  String get settingsSourcesWHOTitle => 'World Health Organization';
+
+  @override
+  String get settingsSourcesWHOSubtitle => 'Emergency Care';
+
+  @override
+  String get settingsSourcesAHATitle => 'American Heart Association';
+
+  @override
+  String get settingsSourcesAHASubtitle => 'CPR Standards';
+
+  @override
+  String get settingsSourcesMDATitle => 'Magen David Adom';
+
+  @override
+  String get settingsSourcesMDASubtitle => 'Israeli Protocols';
+
+  @override
+  String get settingsSourcesLastVerified => 'Last verified: January 2026';
+
+  @override
+  String get settingsAboutDialogTitle => 'About Guardian Angel';
+
+  @override
+  String get settingsAboutVersion => 'Version 1.0.0';
+
+  @override
+  String get settingsAboutDescription =>
+      'An interactive emergency first-aid guide providing step-by-step guidance during medical emergencies.';
+
+  @override
+  String get settingsAboutDevelopedBy => 'Developed by:';
+
+  @override
+  String get settingsAboutCopyright =>
+      '© 2026 Guardian Angel\nAzrieli College of Engineering';
+
+  @override
+  String get disclaimerSubtitle => 'Emergency First Aid Guide';
+
+  @override
+  String get disclaimerNoticeTitle => 'IMPORTANT MEDICAL NOTICE';
+
+  @override
+  String get disclaimerNoticeBody1 =>
+      'This application is a decision-support tool and DOES NOT replace professional medical care, diagnosis, or treatment.';
+
+  @override
+  String get disclaimerNoticeBody2 =>
+      'In the event of a life-threatening emergency, always contact your local emergency services (101) immediately.';
+
+  @override
+  String get disclaimerEmergencyTitle => 'In Case of Emergency:';
+
+  @override
+  String get disclaimerBullet1 => 'Call 101 (Magen David Adom) immediately';
+
+  @override
+  String get disclaimerBullet2 =>
+      'Use this app as a guide while waiting for help';
+
+  @override
+  String get disclaimerBullet3 =>
+      'Seek professional medical attention after first aid';
+
+  @override
+  String get disclaimerSourcesTitle => 'Verified Medical Sources';
+
+  @override
+  String get disclaimerSource1 => 'American Red Cross — First Aid Guidelines';
+
+  @override
+  String get disclaimerSource2 => 'World Health Organization — Emergency Care';
+
+  @override
+  String get disclaimerSource3 => 'American Heart Association — CPR Standards';
+
+  @override
+  String get disclaimerSource4 =>
+      'Magen David Adom — Israeli Emergency Protocols';
+
+  @override
+  String get disclaimerAcknowledge =>
+      'By continuing, you acknowledge that this guidance does not replace emergency medical services and that you will call 101 for serious medical situations.';
+
+  @override
+  String get disclaimerVersion =>
+      'Guardian Angel v1.0.0 • Clinical Sentinel UI';
+
+  @override
+  String get disclaimerContinueBtn => 'I UNDERSTAND — CONTINUE';
+}

@@ -213,6 +213,18 @@ class AppColorsDark {
 }
 
 // ───────────────────────────────────────────────
+// Theme helpers
+// ───────────────────────────────────────────────
+
+ThemeMode themeModeFromString(String value) {
+  switch (value) {
+    case 'light': return ThemeMode.light;
+    case 'dark':  return ThemeMode.dark;
+    default:      return ThemeMode.system;
+  }
+}
+
+// ───────────────────────────────────────────────
 // ThemeData builder
 // ───────────────────────────────────────────────
 
