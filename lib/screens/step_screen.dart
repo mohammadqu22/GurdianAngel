@@ -43,8 +43,10 @@ class _StepScreenState extends State<StepScreen> {
   Future<void> _loadProtocol(String localeCode) async {
     if (!mounted) return;
     setState(() {
-      _loading = true;
+      _loading      = true;
       _errorMessage = null;
+      _currentStep  = 0;
+      _completed    = false;
     });
 
     String? data;
@@ -61,11 +63,30 @@ class _StepScreenState extends State<StepScreen> {
     }
 
     // 2. Fall back to the English file in assets/data/
-    data ??= await rootBundle.loadString(
-      'assets/data/${widget.emergencyId}.json',
-    );
+    try {
+      data ??= await rootBundle.loadString(
+        'assets/data/${widget.emergencyId}.json',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.stepErrorFailed;
+        _loading = false;
+      });
+      return;
+    }
 
-    final Map<String, dynamic> json = jsonDecode(data);
+    final Map<String, dynamic> json;
+    try {
+      json = jsonDecode(data) as Map<String, dynamic>;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.stepErrorInvalid;
+        _loading = false;
+      });
+      return;
+    }
     final steps = json['steps'];
     if (!mounted) return;
     if (steps == null || (steps as List).isEmpty) {

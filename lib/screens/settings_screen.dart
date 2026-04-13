@@ -39,8 +39,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     final raw = prefs.getString('language') ?? 'en';
+    const validCodes = {'en', 'he', 'ar'};
     setState(() {
-      _selectedLocaleCode = raw;
+      _selectedLocaleCode = validCodes.contains(raw) ? raw : 'en';
       _ttsEnabled         = prefs.getBool('tts_enabled') ?? true;
       _themeMode          = themeModeFromString(prefs.getString('theme_mode') ?? 'system');
     });

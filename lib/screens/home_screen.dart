@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final fabL10n = AppLocalizations.of(context)!;
           return Semantics(
             button: true,
-            label: 'Call emergency services on 101',
+            label: fabL10n.homeCallBtn,
             child: Container(
               height: 64,
               decoration: BoxDecoration(

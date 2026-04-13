@@ -47,6 +47,7 @@ class _GuardianAngelAppState extends State<GuardianAngelApp> {
         final deviceLang =
             WidgetsBinding.instance.platformDispatcher.locale.languageCode;
         langPref = supported.contains(deviceLang) ? deviceLang : 'en';
+        await prefs.setString('language', langPref);
       }
       if (mounted) {
         setState(() {
