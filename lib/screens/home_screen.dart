@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:guardian_angel/l10n/app_localizations.dart';
 import 'step_screen.dart';
 import 'settings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.onThemeModeChanged});
+  const HomeScreen({
+    super.key,
+    required this.onThemeModeChanged,
+    required this.onLocaleChanged,
+  });
 
   final ValueChanged<ThemeMode> onThemeModeChanged;
+  final ValueChanged<Locale> onLocaleChanged;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -17,26 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // All emergencies list (accent colors are category constants, not theme tokens)
-  final List<Map<String, dynamic>> _allEmergencies = [
-    {'id': 'choking', 'title': 'Choking', 'icon': Icons.air, 'color': AppColors.chokingBlue},
-    {'id': 'choking_infant', 'title': 'Choking (Infant)', 'icon': Icons.baby_changing_station, 'color': AppColors.chokingBlue},
-    {'id': 'cpr', 'title': 'CPR', 'icon': Icons.favorite, 'color': AppColors.cprRed},
-    {'id': 'cpr_infant', 'title': 'CPR (Infant)', 'icon': Icons.monitor_heart, 'color': AppColors.cprRed},
-    {'id': 'burns', 'title': 'Burns', 'icon': Icons.local_fire_department, 'color': AppColors.burnOrange},
-    {'id': 'bleeding', 'title': 'Bleeding', 'icon': Icons.water_drop, 'color': AppColors.bleedingCrimson},
-    {'id': 'fractures', 'title': 'Fractures', 'icon': Icons.healing, 'color': AppColors.fracturePurple},
-    {'id': 'seizures', 'title': 'Seizures', 'icon': Icons.warning_amber_rounded, 'color': AppColors.seizureAmber},
+  /// Built inside build() so titles are always in the active locale.
+  List<Map<String, dynamic>> _buildEmergencyList(AppLocalizations l10n) => [
+    {'id': 'choking',         'title': l10n.emergencyChoking,        'icon': Icons.air,                        'color': AppColors.chokingBlue},
+    {'id': 'choking_infant',  'title': l10n.emergencyChokingInfant,  'icon': Icons.baby_changing_station,      'color': AppColors.chokingBlue},
+    {'id': 'cpr',             'title': l10n.emergencyCPR,            'icon': Icons.favorite,                   'color': AppColors.cprRed},
+    {'id': 'cpr_infant',      'title': l10n.emergencyCPRInfant,      'icon': Icons.monitor_heart,              'color': AppColors.cprRed},
+    {'id': 'burns',           'title': l10n.emergencyBurns,          'icon': Icons.local_fire_department,      'color': AppColors.burnOrange},
+    {'id': 'bleeding',        'title': l10n.emergencyBleeding,       'icon': Icons.water_drop,                 'color': AppColors.bleedingCrimson},
+    {'id': 'fractures',       'title': l10n.emergencyFractures,      'icon': Icons.healing,                    'color': AppColors.fracturePurple},
+    {'id': 'seizures',        'title': l10n.emergencySeizures,       'icon': Icons.warning_amber_rounded,      'color': AppColors.seizureAmber},
   ];
-
-  List<Map<String, dynamic>> get _filteredEmergencies {
-    if (_searchQuery.isEmpty) return _allEmergencies;
-    return _allEmergencies
-        .where((e) => (e['title'] as String)
-            .toLowerCase()
-            .contains(_searchQuery.toLowerCase()))
-        .toList();
-  }
 
   @override
   void dispose() {
@@ -46,8 +43,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n  = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
+
+    final allEmergencies      = _buildEmergencyList(l10n);
+    final query = _searchQuery.toLowerCase();
+    final filteredEmergencies = _searchQuery.isEmpty
+        ? allEmergencies
+        : allEmergencies
+            .where((e) => (e['title'] as String).toLowerCase().contains(query))
+            .toList();
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -65,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Guardian Angel',
+                        l10n.appName,
                         style: theme.textTheme.headlineMedium?.copyWith(
                           color: cs.primary,
                           fontWeight: FontWeight.bold,
@@ -73,22 +79,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Emergency Response',
+                        l10n.homeSubtitle,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: cs.onSurfaceVariant,
                         ),
                       ),
                     ],
                   ),
-                  // Settings icon — tonal surface circle
+                  // Settings icon
                   IconButton(
-                    tooltip: 'Settings',
+                    tooltip: l10n.homeSettingsTooltip,
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SettingsScreen(
                             onThemeModeChanged: widget.onThemeModeChanged,
+                            onLocaleChanged: widget.onLocaleChanged,
                           ),
                         ),
                       );
@@ -112,31 +119,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // ── Section title ──
               Text(
-                'Select Emergency Type',
+                l10n.homeSelectEmergency,
                 style: theme.textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
 
-              // ── Search Bar (filled, no border — "No-Line" rule) ──
+              // ── Search Bar ──
               TextField(
                 controller: _searchController,
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
+                onChanged: (value) => setState(() => _searchQuery = value),
                 decoration: InputDecoration(
-                  hintText: 'Search emergency...',
+                  hintText: l10n.homeSearchHint,
                   prefixIcon: Icon(Icons.search, color: cs.outline),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: Icon(Icons.clear, color: cs.outline),
-                          onPressed: () {
-                            setState(() {
-                              _searchController.clear();
-                              _searchQuery = '';
-                            });
-                          },
+                          onPressed: () => setState(() {
+                            _searchController.clear();
+                            _searchQuery = '';
+                          }),
                         )
                       : null,
                 ),
@@ -145,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // ── Grid or "No results" ──
               Expanded(
-                child: _filteredEmergencies.isEmpty
+                child: filteredEmergencies.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -153,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(Icons.search_off, size: 64, color: cs.outline),
                             const SizedBox(height: 12),
                             Text(
-                              'No emergency found',
+                              l10n.homeNoResults,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: cs.outline,
                               ),
@@ -165,12 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        children: _filteredEmergencies
+                        children: filteredEmergencies
                             .map((e) => _buildEmergencyCard(
                                   context,
-                                  id: e['id'] as String,
+                                  id:    e['id']    as String,
                                   title: e['title'] as String,
-                                  icon: e['icon'] as IconData,
+                                  icon:  e['icon']  as IconData,
                                   color: e['color'] as Color,
                                 ))
                             .toList(),
@@ -181,71 +182,72 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // ── SOS FAB — gradient, 64dp height ──
+      // ── SOS FAB ──
       floatingActionButton: Builder(
         builder: (context) {
-          final fabCs = Theme.of(context).colorScheme;
+          final fabCs  = Theme.of(context).colorScheme;
+          final fabL10n = AppLocalizations.of(context)!;
           return Semantics(
             button: true,
-            label: 'Call emergency services on 101',
+            label: fabL10n.homeCallBtn,
             child: Container(
-            height: 64,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: const Alignment(-0.97, -0.26),
-                end: const Alignment(0.97, 0.26),
-                colors: [fabCs.primary, fabCs.primaryContainer],
-              ),
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: [
-                BoxShadow(
-                  color: fabCs.onSurface.withValues(alpha: 0.08),
-                  offset: const Offset(0, 16),
-                  blurRadius: 40,
+              height: 64,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: const Alignment(-0.97, -0.26),
+                  end: const Alignment(0.97, 0.26),
+                  colors: [fabCs.primary, fabCs.primaryContainer],
                 ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
                 borderRadius: BorderRadius.circular(32),
-                onTap: () async {
-                  final Uri callUri = Uri(scheme: 'tel', path: '101');
-                  try {
-                    await launchUrl(callUri);
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Could not open dialer. Please call 101 manually.'),
-                          duration: Duration(seconds: 3),
-                        ),
-                      );
+                boxShadow: [
+                  BoxShadow(
+                    color: fabCs.onSurface.withValues(alpha: 0.08),
+                    offset: const Offset(0, 16),
+                    blurRadius: 40,
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(32),
+                  onTap: () async {
+                    final Uri callUri = Uri(scheme: 'tel', path: '101');
+                    try {
+                      await launchUrl(callUri);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(fabL10n.homeCallFailed),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                      }
                     }
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.phone, color: fabCs.onPrimary, size: 22),
-                      const SizedBox(width: 10),
-                      Text(
-                        'CALL 101',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: fabCs.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.phone, color: fabCs.onPrimary, size: 22),
+                        const SizedBox(width: 10),
+                        Text(
+                          fabL10n.homeCallBtn,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: fabCs.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
+          );
         },
       ),
     );
@@ -266,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => StepScreen(
-              emergencyId: id,
+              emergencyId:    id,
               emergencyTitle: title,
               emergencyColor: color,
             ),
@@ -285,7 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon in accent-tinted circle (10% opacity chip style)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

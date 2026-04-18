@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:guardian_angel/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/database_service.dart';
@@ -7,18 +8,24 @@ import '../services/location_service.dart';
 import '../core/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key, required this.onThemeModeChanged});
+  const SettingsScreen({
+    super.key,
+    required this.onThemeModeChanged,
+    required this.onLocaleChanged,
+  });
 
   final ValueChanged<ThemeMode> onThemeModeChanged;
+  final ValueChanged<Locale>    onLocaleChanged;
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguage = 'English';
-  bool _ttsEnabled = true;
-  ThemeMode _themeMode = ThemeMode.system;
+  /// Stored as a locale code: 'en', 'he', or 'ar'.
+  String _selectedLocaleCode = 'en';
+  bool      _ttsEnabled  = true;
+  ThemeMode _themeMode   = ThemeMode.system;
   Map<String, dynamic>? _emergencyContact;
 
   @override
@@ -31,26 +38,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
+    final raw = prefs.getString('language') ?? 'en';
+    const validCodes = {'en', 'he', 'ar'};
     setState(() {
-      _selectedLanguage = prefs.getString('language') ?? 'English';
-      _ttsEnabled = prefs.getBool('tts_enabled') ?? true;
-      _themeMode = _themeModeFromString(prefs.getString('theme_mode') ?? 'system');
+      _selectedLocaleCode = validCodes.contains(raw) ? raw : 'en';
+      _ttsEnabled         = prefs.getBool('tts_enabled') ?? true;
+      _themeMode          = themeModeFromString(prefs.getString('theme_mode') ?? 'system');
     });
   }
 
-  ThemeMode _themeModeFromString(String value) {
-    switch (value) {
-      case 'light': return ThemeMode.light;
-      case 'dark': return ThemeMode.dark;
-      default: return ThemeMode.system;
+  String _themeModeLabel(AppLocalizations l10n, ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light: return l10n.settingsThemeLight;
+      case ThemeMode.dark:  return l10n.settingsThemeDark;
+      default:              return l10n.settingsThemeSystem;
     }
   }
 
-  String _themeModeLabel(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.light: return 'Light';
-      case ThemeMode.dark: return 'Dark';
-      default: return 'System Default';
+  /// Returns the language name in its own script — always shown natively so
+  /// users can recognise their language regardless of the active locale.
+  static String _nativeLanguageName(String code) {
+    switch (code) {
+      case 'he': return 'עברית';
+      case 'ar': return 'العربية';
+      default:   return 'English';
     }
   }
 
@@ -59,8 +70,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final String value;
     switch (mode) {
       case ThemeMode.light: value = 'light'; break;
-      case ThemeMode.dark: value = 'dark'; break;
-      default: value = 'system';
+      case ThemeMode.dark:  value = 'dark';  break;
+      default:              value = 'system';
     }
     await prefs.setString('theme_mode', value);
     if (!mounted) return;
@@ -71,42 +82,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadEmergencyContact() async {
     final contact = await DatabaseService.getEmergencyContact();
     if (!mounted) return;
-    setState(() {
-      _emergencyContact = contact;
-    });
+    setState(() => _emergencyContact = contact);
   }
 
-  Future<void> _saveLanguage(String language) async {
+  /// [localeCode] is 'en', 'he', or 'ar'.
+  Future<void> _saveLanguage(String localeCode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language', language);
-    setState(() {
-      _selectedLanguage = language;
-    });
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Language changed to $language'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
+    await prefs.setString('language', localeCode);
+    if (!mounted) return;
+    setState(() => _selectedLocaleCode = localeCode);
+    widget.onLocaleChanged(Locale(localeCode));
   }
 
   Future<void> _saveTTS(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('tts_enabled', enabled);
-    setState(() {
-      _ttsEnabled = enabled;
-    });
+    if (!mounted) return;
+    setState(() => _ttsEnabled = enabled);
   }
 
   void _showEmergencyContactDialog() {
-    final nameController = TextEditingController(
-      text: _emergencyContact?['name'] ?? '',
-    );
-    final phoneController = TextEditingController(
-      text: _emergencyContact?['phone_number'] ?? '',
-    );
+    final l10n = AppLocalizations.of(context)!;
+    final nameController  = TextEditingController(text: _emergencyContact?['name']         ?? '');
+    final phoneController = TextEditingController(text: _emergencyContact?['phone_number'] ?? '');
 
     showDialog(
       context: context,
@@ -114,9 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final dialogCs = Theme.of(context).colorScheme;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -128,10 +124,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Icon(Icons.contact_phone, color: dialogCs.primary),
                     const SizedBox(width: 10),
                     Text(
-                      'Emergency Contact',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      l10n.settingsContactDialogTitle,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -139,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    labelText: 'Name',
+                    labelText: l10n.settingsContactName,
                     prefixIcon: Icon(Icons.person, color: dialogCs.outline),
                   ),
                 ),
@@ -148,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    labelText: 'Phone Number',
+                    labelText: l10n.settingsContactPhone,
                     prefixIcon: Icon(Icons.phone, color: dialogCs.outline),
                   ),
                 ),
@@ -159,23 +153,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (_emergencyContact != null)
                       TextButton(
                         onPressed: () async {
-                          final nav = Navigator.of(context);
+                          final nav       = Navigator.of(context);
                           final messenger = ScaffoldMessenger.of(context);
                           await DatabaseService.deleteEmergencyContact();
                           await _loadEmergencyContact();
                           if (mounted) {
                             nav.pop();
                             messenger.showSnackBar(
-                              const SnackBar(content: Text('Contact deleted')),
+                              SnackBar(content: Text(l10n.settingsContactDeleted)),
                             );
                           }
                         },
-                        child: Text('Delete',
+                        child: Text(l10n.settingsContactDelete,
                             style: TextStyle(color: dialogCs.error)),
                       ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.settingsCancel),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -192,39 +186,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(AppRadius.md),
                           onTap: () async {
-                            final name = nameController.text.trim();
+                            final name  = nameController.text.trim();
                             final phone = phoneController.text.trim();
                             if (name.isEmpty || phone.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Please fill in both fields')),
+                                SnackBar(content: Text(l10n.settingsContactValidation)),
                               );
                               return;
                             }
-                            final nav = Navigator.of(context);
+                            final nav       = Navigator.of(context);
                             final messenger = ScaffoldMessenger.of(context);
                             await DatabaseService.saveEmergencyContact(name, phone);
                             await _loadEmergencyContact();
                             if (mounted) {
                               nav.pop();
                               messenger.showSnackBar(
-                                SnackBar(
-                                    content: Text('$name saved as emergency contact')),
+                                SnackBar(content: Text(l10n.settingsContactSaved(name))),
                               );
                             }
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                             child: Text(
-                              'SAVE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color: dialogCs.onPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              l10n.settingsContactSave,
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: dialogCs.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -242,6 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _callEmergencyContact() async {
     if (_emergencyContact == null) return;
+    final l10n  = AppLocalizations.of(context)!;
     final phone = _emergencyContact!['phone_number'];
     final Uri callUri = Uri(scheme: 'tel', path: phone);
     try {
@@ -249,13 +238,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open dialer')),
+          SnackBar(content: Text(l10n.settingsCallFailed)),
         );
       }
     }
   }
 
   Future<void> _showLocationDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -263,16 +254,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final dialogCs = Theme.of(context).colorScheme;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Row(
               children: [
                 CircularProgressIndicator(color: dialogCs.primary),
                 const SizedBox(width: 16),
-                const Text('Fetching location...'),
+                Text(l10n.settingsLocationFetching),
               ],
             ),
           ),
@@ -286,14 +275,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (position == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Could not get location. Check GPS settings.')),
+          SnackBar(content: Text(l10n.settingsLocationFailed)),
         );
       }
       return;
     }
 
-    final mapsLink = LocationService.getMapsLink(position);
+    final mapsLink  = LocationService.getMapsLink(position);
     final formatted = LocationService.formatLocation(position);
 
     if (mounted) {
@@ -301,12 +289,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context: context,
         builder: (context) {
           final dialogCs = Theme.of(context).colorScheme;
-          final theme = Theme.of(context);
+          final theme    = Theme.of(context);
+          final dl10n    = AppLocalizations.of(context)!;
           return Dialog(
             backgroundColor: dialogCs.surfaceContainerLowest,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -318,19 +305,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icon(Icons.location_on, color: dialogCs.primary),
                       const SizedBox(width: 10),
                       Text(
-                        'My Location',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        dl10n.settingsLocationDialogTitle,
+                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Share this link with someone to show your location:',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: dialogCs.onSurfaceVariant,
-                    ),
+                    dl10n.settingsLocationShareHint,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: dialogCs.onSurfaceVariant),
                   ),
                   const SizedBox(height: 12),
                   Container(
@@ -339,15 +322,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: dialogCs.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: Text(mapsLink,
-                        style: theme.textTheme.bodyMedium),
+                    child: Text(mapsLink, style: theme.textTheme.bodyMedium),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Coordinates: $formatted',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: dialogCs.outline,
-                    ),
+                    dl10n.settingsLocationCoords(formatted),
+                    style: theme.textTheme.labelSmall?.copyWith(color: dialogCs.outline),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -355,7 +335,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Close'),
+                        child: Text(dl10n.settingsClose),
                       ),
                       const SizedBox(width: 8),
                       Container(
@@ -376,21 +356,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Clipboard.setData(ClipboardData(text: mapsLink));
                               Navigator.pop(context);
                               messenger.showSnackBar(
-                                const SnackBar(
-                                    content: Text('Location link copied! 📋')),
+                                SnackBar(content: Text(dl10n.settingsLocationCopied)),
                               );
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.copy,
-                                      size: 18, color: dialogCs.onPrimary),
+                                  Icon(Icons.copy, size: 18, color: dialogCs.onPrimary),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Copy Link',
+                                    dl10n.settingsLocationCopy,
                                     style: theme.textTheme.labelLarge?.copyWith(
                                       color: dialogCs.onPrimary,
                                       fontWeight: FontWeight.bold,
@@ -415,17 +392,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n  = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
         title: Text(
-          'Settings',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          l10n.settingsTitle,
+          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         backgroundColor: cs.surface,
         foregroundColor: cs.onSurface,
@@ -436,57 +412,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Subtitle ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Configure your life-saving assistant.',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: cs.onSurfaceVariant,
-                ),
+                l10n.settingsSubtitle,
+                style: theme.textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
               ),
             ),
             const SizedBox(height: 28),
 
-            // ── Preferences Section ──
-            _buildSectionHeader('Preferences'),
+            // ── Preferences ──
+            _buildSectionHeader(l10n.settingsSectionPreferences),
             const SizedBox(height: 12),
 
             _buildSettingCard(
               icon: Icons.language,
               iconColor: cs.tertiary,
-              title: 'Language',
-              subtitle: _selectedLanguage,
-              onTap: () => _showLanguageDialog(),
+              title: l10n.settingsLanguage,
+              subtitle: _nativeLanguageName(_selectedLocaleCode),
+              onTap: _showLanguageDialog,
             ),
-
             _buildSettingCard(
               icon: Icons.brightness_6_outlined,
               iconColor: cs.tertiary,
-              title: 'App Theme',
-              subtitle: _themeModeLabel(_themeMode),
-              onTap: () => _showThemeDialog(),
+              title: l10n.settingsTheme,
+              subtitle: _themeModeLabel(l10n, _themeMode),
+              onTap: _showThemeDialog,
             ),
-
             _buildSwitchCard(
               icon: Icons.record_voice_over,
               iconColor: cs.tertiary,
-              title: 'Voice Guidance',
-              subtitle: 'TTS Audio Instructions',
+              title: l10n.settingsVoiceGuidance,
+              subtitle: l10n.settingsTtsSubtitle,
               value: _ttsEnabled,
-              onChanged: (value) => _saveTTS(value),
+              onChanged: _saveTTS,
             ),
 
             const SizedBox(height: 32),
 
-            // ── Emergency Contact Section ──
-            _buildSectionHeader('Emergency Contact'),
+            // ── Emergency Contact ──
+            _buildSectionHeader(l10n.settingsSectionEmergencyContact),
             const SizedBox(height: 12),
 
             _emergencyContact != null
                 ? Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 6),
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: cs.surfaceContainerLow,
@@ -500,8 +470,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: cs.primary.withValues(alpha: 0.10),
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
-                          child: Icon(Icons.contact_phone,
-                              color: cs.primary, size: 24),
+                          child: Icon(Icons.contact_phone, color: cs.primary, size: 24),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
@@ -510,15 +479,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children: [
                               Text(
                                 _emergencyContact!['name'],
-                                style: theme.textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 _emergencyContact!['phone_number'],
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: cs.onSurfaceVariant,
-                                ),
+                                style: theme.textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                               ),
                             ],
                           ),
@@ -526,12 +492,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         IconButton(
                           icon: Icon(Icons.phone, color: cs.tertiary),
                           onPressed: _callEmergencyContact,
-                          tooltip: 'Call contact',
+                          tooltip: l10n.settingsCallContactTooltip,
                         ),
                         IconButton(
                           icon: Icon(Icons.edit, color: cs.outline),
                           onPressed: _showEmergencyContactDialog,
-                          tooltip: 'Edit contact',
+                          tooltip: l10n.settingsEditContactTooltip,
                         ),
                       ],
                     ),
@@ -539,45 +505,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 : _buildSettingCard(
                     icon: Icons.person_add,
                     iconColor: cs.primary,
-                    title: 'Add Emergency Contact',
-                    subtitle: 'Save a trusted person to call in emergencies',
+                    title: l10n.settingsAddContact,
+                    subtitle: l10n.settingsAddContactSubtitle,
                     onTap: _showEmergencyContactDialog,
                   ),
 
             const SizedBox(height: 8),
 
             // ── Location Tools ──
-            _buildSectionHeader('Location Tools'),
+            _buildSectionHeader(l10n.settingsSectionLocation),
             const SizedBox(height: 12),
 
             _buildSettingCard(
               icon: Icons.location_on,
               iconColor: cs.tertiary,
-              title: 'Share My Location',
-              subtitle: 'Live updates with emergency services',
+              title: l10n.settingsShareLocation,
+              subtitle: l10n.settingsShareLocationSubtitle,
               onTap: _showLocationDialog,
             ),
 
             const SizedBox(height: 32),
 
-            // ── Information Section ──
-            _buildSectionHeader('Information'),
+            // ── Information ──
+            _buildSectionHeader(l10n.settingsSectionInfo),
             const SizedBox(height: 12),
 
             _buildSettingCard(
               icon: Icons.verified_user,
               iconColor: cs.secondary,
-              title: 'Medical Sources',
-              subtitle: 'View our verified sources',
-              onTap: () => _showMedicalSourcesDialog(),
+              title: l10n.settingsMedicalSources,
+              subtitle: l10n.settingsMedicalSourcesSubtitle,
+              onTap: _showMedicalSourcesDialog,
             ),
-
             _buildSettingCard(
               icon: Icons.info_outline,
               iconColor: cs.outline,
-              title: 'About Guardian Angel',
-              subtitle: 'App information & version',
-              onTap: () => _showAboutDialog(),
+              title: l10n.settingsAbout,
+              subtitle: l10n.settingsAboutSubtitle,
+              onTap: _showAboutDialog,
             ),
 
             const SizedBox(height: 32),
@@ -594,7 +559,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Medical Disclaimer',
+                    l10n.settingsDisclaimerTitle,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: cs.onSurface,
@@ -602,7 +567,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'This application is an educational and supportive tool. It does not replace professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions regarding a medical condition. In case of a life-threatening emergency, call your local emergency services immediately.',
+                    l10n.settingsDisclaimerBody,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: cs.onSurfaceVariant,
                       height: 1.6,
@@ -617,6 +582,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+
+  // ── Reusable card widgets ────────────────────────────────────────────────
 
   Widget _buildSectionHeader(String title) {
     final cs = Theme.of(context).colorScheme;
@@ -641,7 +608,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return GestureDetector(
       onTap: onTap,
@@ -667,23 +635,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text(title,
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
+                  Text(subtitle,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: cs.outline, size: 22),
+            // Chevron flips in RTL
+            Icon(isRtl ? Icons.chevron_left : Icons.chevron_right,
+                color: cs.outline, size: 22),
           ],
         ),
       ),
@@ -699,7 +661,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -718,18 +680,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           child: Icon(icon, color: iconColor, size: 24),
         ),
-        title: Text(
-          title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: cs.onSurfaceVariant,
-          ),
-        ),
+        title: Text(title,
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle,
+            style: theme.textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
         value: value,
         onChanged: onChanged,
         activeThumbColor: cs.primary,
@@ -738,16 +692,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // ── Dialogs ──────────────────────────────────────────────────────────────
+
   void _showThemeDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         final dialogCs = Theme.of(context).colorScheme;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
@@ -757,16 +712,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
-                    'App Theme',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    l10n.settingsThemeDialogTitle,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildThemeOption(ThemeMode.system, 'System Default', Icons.brightness_auto),
-                _buildThemeOption(ThemeMode.light, 'Light', Icons.light_mode_outlined),
-                _buildThemeOption(ThemeMode.dark, 'Dark', Icons.dark_mode_outlined),
+                _buildThemeOption(ThemeMode.system, l10n.settingsThemeSystem, Icons.brightness_auto),
+                _buildThemeOption(ThemeMode.light,  l10n.settingsThemeLight,  Icons.light_mode_outlined),
+                _buildThemeOption(ThemeMode.dark,   l10n.settingsThemeDark,   Icons.dark_mode_outlined),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -774,7 +727,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.settingsCancel),
                     ),
                   ),
                 ),
@@ -787,15 +740,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildThemeOption(ThemeMode mode, String label, IconData icon) {
-    final cs = Theme.of(context).colorScheme;
+    final cs         = Theme.of(context).colorScheme;
     final isSelected = _themeMode == mode;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24),
       leading: Icon(icon, color: isSelected ? cs.primary : cs.outline),
       title: Text(label, style: Theme.of(context).textTheme.titleMedium),
-      trailing: isSelected
-          ? Icon(Icons.check_circle, color: cs.primary)
-          : null,
+      trailing: isSelected ? Icon(Icons.check_circle, color: cs.primary) : null,
       onTap: () {
         _saveThemeMode(mode);
         Navigator.pop(context);
@@ -804,15 +755,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showLanguageDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         final dialogCs = Theme.of(context).colorScheme;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
@@ -822,16 +772,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
-                    'Select Language',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    l10n.settingsSelectLanguage,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildLanguageOption('English', '🇬🇧'),
-                _buildLanguageOption('Hebrew', '🇮🇱'),
-                _buildLanguageOption('Arabic', '🇸🇦'),
+                // Language names are always shown in their own script — not translated
+                _buildLanguageOption('en', 'English'),
+                _buildLanguageOption('he', 'עברית'),
+                _buildLanguageOption('ar', 'العربية'),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -839,7 +788,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.settingsCancel),
                     ),
                   ),
                 ),
@@ -851,37 +800,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildLanguageOption(String language, String flag) {
-    final cs = Theme.of(context).colorScheme;
-    final isSelected = _selectedLanguage == language;
+  Widget _buildLanguageOption(String localeCode, String nativeName) {
+    final cs         = Theme.of(context).colorScheme;
+    final isSelected = _selectedLocaleCode == localeCode;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-      leading: Text(flag, style: const TextStyle(fontSize: 24)),
-      title: Text(
-        language,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      trailing: isSelected
-          ? Icon(Icons.check_circle, color: cs.primary)
-          : null,
+      title: Text(nativeName, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400)),
+      trailing: isSelected ? Icon(Icons.check_circle, color: cs.primary) : null,
       onTap: () {
-        _saveLanguage(language);
+        _saveLanguage(localeCode);
         Navigator.pop(context);
       },
     );
   }
 
   void _showMedicalSourcesDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         final dialogCs = Theme.of(context).colorScheme;
-        final theme = Theme.of(context);
+        final theme    = Theme.of(context);
+        final dl10n    = AppLocalizations.of(context)!;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -893,38 +836,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Icon(Icons.verified_user, color: dialogCs.primary),
                     const SizedBox(width: 10),
                     Text(
-                      'Medical Sources',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      dl10n.settingsSourcesDialogTitle,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'All emergency procedures are based on verified sources:',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  dl10n.settingsSourcesIntro,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                _buildSourceItem('American Red Cross', 'First Aid Guidelines'),
-                _buildSourceItem('World Health Organization', 'Emergency Care'),
-                _buildSourceItem('American Heart Association', 'CPR Standards'),
-                _buildSourceItem('Magen David Adom', 'Israeli Protocols'),
+                _buildSourceItem(dl10n.settingsSourcesRedCrossTitle, dl10n.settingsSourcesRedCrossSubtitle),
+                _buildSourceItem(dl10n.settingsSourcesWHOTitle,      dl10n.settingsSourcesWHOSubtitle),
+                _buildSourceItem(dl10n.settingsSourcesAHATitle,      dl10n.settingsSourcesAHASubtitle),
+                _buildSourceItem(dl10n.settingsSourcesMDATitle,      dl10n.settingsSourcesMDASubtitle),
                 const SizedBox(height: 16),
                 Text(
-                  'Last verified: January 2026',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: dialogCs.outline,
-                  ),
+                  dl10n.settingsSourcesLastVerified,
+                  style: theme.textTheme.labelSmall?.copyWith(color: dialogCs.outline),
                 ),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                    child: Text(l10n.settingsClose),
                   ),
                 ),
               ],
@@ -950,14 +887,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Text(title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    )),
+                      fontWeight: FontWeight.w600, fontSize: 15)),
                 Text(subtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant,
-                      fontSize: 13,
-                    )),
+                      color: cs.onSurfaceVariant, fontSize: 13)),
               ],
             ),
           ),
@@ -967,16 +900,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showAboutDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         final dialogCs = Theme.of(context).colorScheme;
-        final theme = Theme.of(context);
+        final theme    = Theme.of(context);
+        final dl10n    = AppLocalizations.of(context)!;
         return Dialog(
           backgroundColor: dialogCs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -988,53 +921,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Icon(Icons.medical_services, color: dialogCs.primary),
                     const SizedBox(width: 10),
                     Text(
-                      'About Guardian Angel',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      dl10n.settingsAboutDialogTitle,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Guardian Angel',
+                  dl10n.appName,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: dialogCs.primary,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text('Version 1.0.0',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: dialogCs.outline,
-                    )),
+                Text(dl10n.settingsAboutVersion,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: dialogCs.outline)),
                 const SizedBox(height: 16),
-                Text(
-                  'An interactive emergency first-aid guide providing step-by-step guidance during medical emergencies.',
-                  style: theme.textTheme.bodyLarge,
-                ),
+                Text(dl10n.settingsAboutDescription, style: theme.textTheme.bodyLarge),
                 const SizedBox(height: 16),
-                Text('Developed by:',
+                Text(dl10n.settingsAboutDevelopedBy,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    )),
+                      fontWeight: FontWeight.bold, fontSize: 15)),
                 const SizedBox(height: 6),
                 Text('Mohammad Quttaineh', style: theme.textTheme.bodyLarge),
-                Text('Amru Alyan', style: theme.textTheme.bodyLarge),
+                Text('Amru Alyan',         style: theme.textTheme.bodyLarge),
                 const SizedBox(height: 16),
                 Text(
-                  '© 2026 Guardian Angel\nAzrieli College of Engineering',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: dialogCs.outline,
-                  ),
+                  dl10n.settingsAboutCopyright,
+                  style: theme.textTheme.labelSmall?.copyWith(color: dialogCs.outline),
                 ),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                    child: Text(l10n.settingsClose),
                   ),
                 ),
               ],

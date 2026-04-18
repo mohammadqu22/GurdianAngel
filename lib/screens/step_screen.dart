@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:guardian_angel/l10n/app_localizations.dart';
 import '../core/app_theme.dart';
 
 class StepScreen extends StatefulWidget {
@@ -20,81 +21,114 @@ class StepScreen extends StatefulWidget {
 }
 
 class _StepScreenState extends State<StepScreen> {
-  List<dynamic> _steps = [];
+  List<dynamic> _steps    = [];
   List<dynamic> _warnings = [];
-  int _currentStep = 0;
-  bool _loading = true;
-  bool _completed = false;
+  int  _currentStep  = 0;
+  bool _loading      = true;
+  bool _completed    = false;
   String? _errorMessage;
+  String? _loadedLocale; // tracks which locale's JSON is currently loaded
 
   @override
-  void initState() {
-    super.initState();
-    _loadProtocol();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final localeCode = Localizations.localeOf(context).languageCode;
+    if (_loadedLocale != localeCode) {
+      _loadedLocale = localeCode;
+      _loadProtocol(localeCode);
+    }
   }
 
-  Future<void> _loadProtocol() async {
-    try {
-      final String data = await rootBundle
-          .loadString('assets/data/${widget.emergencyId}.json');
-      final Map<String, dynamic> json = jsonDecode(data);
-      final steps = json['steps'];
-      if (steps == null || (steps as List).isEmpty) {
-        if (!mounted) return;
-        setState(() {
-          _errorMessage = 'Protocol data is invalid. Please reinstall the app.';
-          _loading = false;
-        });
-        return;
+  /// Tries to load the protocol for [localeCode]; falls back to English.
+  Future<void> _loadProtocol(String localeCode) async {
+    if (!mounted) return;
+    setState(() {
+      _loading      = true;
+      _errorMessage = null;
+      _currentStep  = 0;
+      _completed    = false;
+    });
+
+    String? data;
+
+    // 1. Try the locale-specific file (he/ or ar/ subdirectory)
+    if (localeCode != 'en') {
+      try {
+        data = await rootBundle.loadString(
+          'assets/data/$localeCode/${widget.emergencyId}.json',
+        );
+      } catch (_) {
+        // locale file missing — will fall back to English below
       }
-      if (!mounted) return;
-      setState(() {
-        _steps = steps;
-        _warnings = json['warnings'] ?? [];
-        _loading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _errorMessage = 'Failed to load protocol. Please restart the app.';
-        _loading = false;
-      });
     }
+
+    // 2. Fall back to the English file in assets/data/
+    try {
+      data ??= await rootBundle.loadString(
+        'assets/data/${widget.emergencyId}.json',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.stepErrorFailed;
+        _loading = false;
+      });
+      return;
+    }
+
+    final Map<String, dynamic> json;
+    try {
+      json = jsonDecode(data) as Map<String, dynamic>;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.stepErrorInvalid;
+        _loading = false;
+      });
+      return;
+    }
+    final steps = json['steps'];
+    if (!mounted) return;
+    if (steps == null || (steps as List).isEmpty) {
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.stepErrorInvalid;
+        _loading = false;
+      });
+      return;
+    }
+    setState(() {
+      _steps    = steps;
+      _warnings = json['warnings'] ?? [];
+      _loading  = false;
+    });
   }
 
   void _nextStep() {
     if (_currentStep < _steps.length - 1) {
-      setState(() {
-        _currentStep++;
-      });
+      setState(() => _currentStep++);
     } else {
-      setState(() {
-        _completed = true;
-      });
+      setState(() => _completed = true);
     }
   }
 
   void _previousStep() {
     if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
+      setState(() => _currentStep--);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n  = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
         title: Text(
           widget.emergencyTitle,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         backgroundColor: cs.surface,
         foregroundColor: cs.onSurface,
@@ -102,11 +136,7 @@ class _StepScreenState extends State<StepScreen> {
         centerTitle: false,
       ),
       body: _loading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: widget.emergencyColor,
-              ),
-            )
+          ? Center(child: CircularProgressIndicator(color: widget.emergencyColor))
           : _errorMessage != null
               ? Center(
                   child: Padding(
@@ -121,16 +151,17 @@ class _StepScreenState extends State<StepScreen> {
                   ),
                 )
               : _completed
-                  ? _buildCompletedScreen()
-                  : _buildStepScreen(),
+                  ? _buildCompletedScreen(l10n)
+                  : _buildStepScreen(l10n),
     );
   }
 
-  Widget _buildStepScreen() {
-    final step = _steps[_currentStep];
+  Widget _buildStepScreen(AppLocalizations l10n) {
+    final step       = _steps[_currentStep];
     final totalSteps = _steps.length;
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final theme      = Theme.of(context);
+    final cs         = theme.colorScheme;
+    final isRtl      = Directionality.of(context) == TextDirection.rtl;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
@@ -142,7 +173,7 @@ class _StepScreenState extends State<StepScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Step ${_currentStep + 1} of $totalSteps',
+                l10n.stepProgress(_currentStep + 1, totalSteps),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: cs.onSurfaceVariant,
                 ),
@@ -170,7 +201,7 @@ class _StepScreenState extends State<StepScreen> {
           ),
           const SizedBox(height: 32),
 
-          // ── Step card — tonal layering ──
+          // ── Step card ──
           Expanded(
             child: Container(
               width: double.infinity,
@@ -187,7 +218,7 @@ class _StepScreenState extends State<StepScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Step number circle — emergency color
+                    // Step number circle
                     Container(
                       width: 48,
                       height: 48,
@@ -222,7 +253,7 @@ class _StepScreenState extends State<StepScreen> {
 
                     const SizedBox(height: 12),
 
-                    // Step title
+                    // Step title — from JSON (not localized; JSON has its own language)
                     Text(
                       step['title'],
                       style: theme.textTheme.headlineSmall?.copyWith(
@@ -233,7 +264,7 @@ class _StepScreenState extends State<StepScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Step instruction
+                    // Step instruction — from JSON
                     Text(
                       step['instruction'],
                       style: theme.textTheme.bodyLarge?.copyWith(
@@ -260,8 +291,8 @@ class _StepScreenState extends State<StepScreen> {
                     height: 52,
                     child: OutlinedButton.icon(
                       onPressed: _previousStep,
-                      icon: const Icon(Icons.arrow_back, size: 20),
-                      label: const Text('Previous'),
+                      icon: Icon(Icons.arrow_back, size: 20),
+                      label: Text(l10n.stepPrevious),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         side: BorderSide(color: widget.emergencyColor, width: 1.5),
@@ -298,7 +329,9 @@ class _StepScreenState extends State<StepScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            _currentStep == totalSteps - 1 ? 'DONE' : 'NEXT STEP',
+                            _currentStep == totalSteps - 1
+                                ? l10n.stepDone
+                                : l10n.stepNext,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -326,7 +359,7 @@ class _StepScreenState extends State<StepScreen> {
           if (_warnings.isNotEmpty) ...[
             const SizedBox(height: 16),
             GestureDetector(
-              onTap: () => _showWarningsDialog(),
+              onTap: _showWarningsDialog,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
@@ -342,7 +375,7 @@ class _StepScreenState extends State<StepScreen> {
                     Icon(Icons.warning_amber_rounded, color: cs.secondary, size: 22),
                     const SizedBox(width: 10),
                     Text(
-                      'View important warnings',
+                      l10n.stepWarningsBtn,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: cs.secondary,
                         fontWeight: FontWeight.w600,
@@ -350,7 +383,11 @@ class _StepScreenState extends State<StepScreen> {
                       ),
                     ),
                     const Spacer(),
-                    Icon(Icons.chevron_right, color: cs.secondary),
+                    // Chevron flips in RTL
+                    Icon(
+                      isRtl ? Icons.chevron_left : Icons.chevron_right,
+                      color: cs.secondary,
+                    ),
                   ],
                 ),
               ),
@@ -361,9 +398,9 @@ class _StepScreenState extends State<StepScreen> {
     );
   }
 
-  Widget _buildCompletedScreen() {
+  Widget _buildCompletedScreen(AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
 
     return Center(
       child: Padding(
@@ -384,7 +421,7 @@ class _StepScreenState extends State<StepScreen> {
             const SizedBox(height: 28),
 
             Text(
-              'TREATMENT COMPLETE',
+              l10n.stepCompleteTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: cs.onSurface,
@@ -393,15 +430,13 @@ class _StepScreenState extends State<StepScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'All protocol steps have been successfully administered for ${widget.emergencyTitle}.',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: cs.onSurfaceVariant,
-              ),
+              l10n.stepCompleteBody(widget.emergencyTitle),
+              style: theme.textTheme.bodyLarge?.copyWith(color: cs.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
 
-            // ── Monitor vitals note ──
+            // ── Monitor vitals ──
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -411,7 +446,7 @@ class _StepScreenState extends State<StepScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Monitor Patient Vitals',
+                    l10n.stepCompleteVitalsTitle,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: cs.onSurface,
@@ -419,7 +454,7 @@ class _StepScreenState extends State<StepScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Maintain clinical observation. Ensure the patient remains warm and avoid sudden movements while waiting for medical staff arrival.',
+                    l10n.stepCompleteVitalsBody,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: cs.onSurfaceVariant,
                       height: 1.5,
@@ -432,7 +467,7 @@ class _StepScreenState extends State<StepScreen> {
 
             const SizedBox(height: 16),
 
-            // ── Disclaimer note ──
+            // ── Disclaimer ──
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -445,7 +480,7 @@ class _StepScreenState extends State<StepScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'This app does not replace professional medical care. Seek a doctor if needed.',
+                      l10n.stepCompleteDisclaimer,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: cs.onSurfaceVariant,
                       ),
@@ -456,7 +491,7 @@ class _StepScreenState extends State<StepScreen> {
             ),
             const SizedBox(height: 32),
 
-            // ── Back to Home button — gradient ──
+            // ── Back to Home ──
             Container(
               width: double.infinity,
               height: 56,
@@ -479,7 +514,7 @@ class _StepScreenState extends State<StepScreen> {
                       Icon(Icons.home, color: cs.onPrimary, size: 22),
                       const SizedBox(width: 10),
                       Text(
-                        'BACK TO HOME',
+                        l10n.stepCompleteBackBtn,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: cs.onPrimary,
                           fontWeight: FontWeight.bold,
@@ -498,8 +533,9 @@ class _StepScreenState extends State<StepScreen> {
   }
 
   void _showWarningsDialog() {
+    final l10n  = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs    = theme.colorScheme;
 
     showDialog(
       context: context,
@@ -517,7 +553,7 @@ class _StepScreenState extends State<StepScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'IMPORTANT WARNINGS',
+                  l10n.stepWarningsTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: cs.primary,
@@ -562,11 +598,9 @@ class _StepScreenState extends State<StepScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: cs.primary,
-                    ),
+                    style: TextButton.styleFrom(foregroundColor: cs.primary),
                     child: Text(
-                      'GOT IT',
+                      l10n.stepWarningsGotIt,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.bold,

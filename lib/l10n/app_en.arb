@@ -1,0 +1,150 @@
+{
+  "@@locale": "en",
+
+  "appName": "Guardian Angel",
+
+  "homeSubtitle": "Emergency Response",
+  "homeSelectEmergency": "Select Emergency Type",
+  "homeSearchHint": "Search emergency...",
+  "homeNoResults": "No emergency found",
+  "homeCallBtn": "CALL 101",
+  "homeCallFailed": "Could not open dialer. Please call 101 manually.",
+  "homeSettingsTooltip": "Settings",
+
+  "emergencyChoking": "Choking",
+  "emergencyChokingInfant": "Choking (Infant)",
+  "emergencyCPR": "CPR",
+  "@emergencyCPR": {
+    "description": "Cardiopulmonary resuscitation. REVIEW: kept as 'CPR' in English; verify translated form with stakeholders."
+  },
+  "emergencyCPRInfant": "CPR (Infant)",
+  "emergencyBurns": "Burns",
+  "emergencyBleeding": "Bleeding",
+  "emergencyFractures": "Fractures",
+  "emergencySeizures": "Seizures",
+
+  "stepProgress": "Step {current} of {total}",
+  "@stepProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total":   { "type": "int" }
+    }
+  },
+  "stepNext": "NEXT STEP",
+  "stepDone": "DONE",
+  "stepPrevious": "Previous",
+  "stepWarningsBtn": "View important warnings",
+  "stepWarningsTitle": "IMPORTANT WARNINGS",
+  "stepWarningsGotIt": "GOT IT",
+  "stepErrorInvalid": "Protocol data is invalid. Please reinstall the app.",
+  "stepErrorFailed": "Failed to load protocol. Please restart the app.",
+  "stepCompleteTitle": "TREATMENT COMPLETE",
+  "stepCompleteBody": "All protocol steps have been successfully administered for {emergencyTitle}.",
+  "@stepCompleteBody": {
+    "placeholders": {
+      "emergencyTitle": { "type": "String" }
+    }
+  },
+  "stepCompleteVitalsTitle": "Monitor Patient Vitals",
+  "stepCompleteVitalsBody": "Maintain clinical observation. Ensure the patient remains warm and avoid sudden movements while waiting for medical staff arrival.",
+  "stepCompleteDisclaimer": "This app does not replace professional medical care. Seek a doctor if needed.",
+  "stepCompleteBackBtn": "BACK TO HOME",
+
+  "settingsTitle": "Settings",
+  "settingsSubtitle": "Configure your life-saving assistant.",
+  "settingsSectionPreferences": "Preferences",
+  "settingsLanguage": "Language",
+  "settingsTheme": "App Theme",
+  "settingsVoiceGuidance": "Voice Guidance",
+  "settingsTtsSubtitle": "TTS Audio Instructions",
+  "settingsSectionEmergencyContact": "Emergency Contact",
+  "settingsAddContact": "Add Emergency Contact",
+  "settingsAddContactSubtitle": "Save a trusted person to call in emergencies",
+  "settingsSectionLocation": "Location Tools",
+  "settingsShareLocation": "Share My Location",
+  "settingsShareLocationSubtitle": "Live updates with emergency services",
+  "settingsSectionInfo": "Information",
+  "settingsMedicalSources": "Medical Sources",
+  "settingsMedicalSourcesSubtitle": "View our verified sources",
+  "settingsAbout": "About Guardian Angel",
+  "settingsAboutSubtitle": "App information & version",
+  "settingsDisclaimerTitle": "Medical Disclaimer",
+  "settingsDisclaimerBody": "This application is an educational and supportive tool. It does not replace professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions regarding a medical condition. In case of a life-threatening emergency, call your local emergency services immediately.",
+
+  "settingsSelectLanguage": "Select Language",
+  "settingsCancel": "Cancel",
+  "settingsClose": "Close",
+
+  "settingsThemeDialogTitle": "App Theme",
+  "settingsThemeSystem": "System Default",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+
+  "settingsContactDialogTitle": "Emergency Contact",
+  "settingsContactName": "Name",
+  "settingsContactPhone": "Phone Number",
+  "settingsContactDelete": "Delete",
+  "settingsContactSave": "SAVE",
+  "settingsContactValidation": "Please fill in both fields",
+  "settingsContactDeleted": "Contact deleted",
+  "settingsContactSaved": "{name} saved as emergency contact",
+  "@settingsContactSaved": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "settingsCallFailed": "Could not open dialer",
+  "settingsCallContactTooltip": "Call contact",
+  "settingsEditContactTooltip": "Edit contact",
+
+  "settingsLocationFetching": "Fetching location...",
+  "settingsLocationFailed": "Could not get location. Check GPS settings.",
+  "settingsLocationDialogTitle": "My Location",
+  "settingsLocationShareHint": "Share this link with someone to show your location:",
+  "settingsLocationCoords": "Coordinates: {coords}",
+  "@settingsLocationCoords": {
+    "placeholders": {
+      "coords": { "type": "String" }
+    }
+  },
+  "settingsLocationCopy": "Copy Link",
+  "settingsLocationCopied": "Location link copied! 📋",
+
+  "settingsSourcesDialogTitle": "Medical Sources",
+  "settingsSourcesIntro": "All emergency procedures are based on verified sources:",
+  "settingsSourcesRedCrossTitle": "American Red Cross",
+  "settingsSourcesRedCrossSubtitle": "First Aid Guidelines",
+  "settingsSourcesWHOTitle": "World Health Organization",
+  "settingsSourcesWHOSubtitle": "Emergency Care",
+  "settingsSourcesAHATitle": "American Heart Association",
+  "settingsSourcesAHASubtitle": "CPR Standards",
+  "settingsSourcesMDATitle": "Magen David Adom",
+  "@settingsSourcesMDATitle": {
+    "description": "Israeli emergency medical service. REVIEW: organisation name — confirm Arabic/Hebrew form with stakeholders."
+  },
+  "settingsSourcesMDASubtitle": "Israeli Protocols",
+  "settingsSourcesLastVerified": "Last verified: January 2026",
+
+  "settingsAboutDialogTitle": "About Guardian Angel",
+  "settingsAboutVersion": "Version 1.0.0",
+  "settingsAboutDescription": "An interactive emergency first-aid guide providing step-by-step guidance during medical emergencies.",
+  "settingsAboutDevelopedBy": "Developed by:",
+  "settingsAboutCopyright": "© 2026 Guardian Angel\nAzrieli College of Engineering",
+
+  "disclaimerSubtitle": "Emergency First Aid Guide",
+  "disclaimerNoticeTitle": "IMPORTANT MEDICAL NOTICE",
+  "disclaimerNoticeBody1": "This application is a decision-support tool and DOES NOT replace professional medical care, diagnosis, or treatment.",
+  "disclaimerNoticeBody2": "In the event of a life-threatening emergency, always contact your local emergency services (101) immediately.",
+  "disclaimerEmergencyTitle": "In Case of Emergency:",
+  "disclaimerBullet1": "Call 101 (Magen David Adom) immediately",
+  "disclaimerBullet2": "Use this app as a guide while waiting for help",
+  "disclaimerBullet3": "Seek professional medical attention after first aid",
+  "disclaimerSourcesTitle": "Verified Medical Sources",
+  "disclaimerSource1": "American Red Cross — First Aid Guidelines",
+  "disclaimerSource2": "World Health Organization — Emergency Care",
+  "disclaimerSource3": "American Heart Association — CPR Standards",
+  "disclaimerSource4": "Magen David Adom — Israeli Emergency Protocols",
+  "disclaimerAcknowledge": "By continuing, you acknowledge that this guidance does not replace emergency medical services and that you will call 101 for serious medical situations.",
+  "disclaimerVersion": "Guardian Angel v1.0.0 • Clinical Sentinel UI",
+  "disclaimerContinueBtn": "I UNDERSTAND — CONTINUE"
+}

@@ -1,0 +1,357 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Hebrew (`he`).
+class AppLocalizationsHe extends AppLocalizations {
+  AppLocalizationsHe([String locale = 'he']) : super(locale);
+
+  @override
+  String get appName => 'Guardian Angel';
+
+  @override
+  String get homeSubtitle => 'תגובה לחירום';
+
+  @override
+  String get homeSelectEmergency => 'בחר סוג חירום';
+
+  @override
+  String get homeSearchHint => 'חפש חירום...';
+
+  @override
+  String get homeNoResults => 'לא נמצא חירום';
+
+  @override
+  String get homeCallBtn => 'התקשר 101';
+
+  @override
+  String get homeCallFailed =>
+      'לא ניתן לפתוח את החייגן. אנא התקשר ל-101 ידנית.';
+
+  @override
+  String get homeSettingsTooltip => 'הגדרות';
+
+  @override
+  String get emergencyChoking => 'חנק';
+
+  @override
+  String get emergencyChokingInfant => 'חנק (תינוק)';
+
+  @override
+  String get emergencyCPR => 'החייאה';
+
+  @override
+  String get emergencyCPRInfant => 'החייאה (תינוק)';
+
+  @override
+  String get emergencyBurns => 'כוויות';
+
+  @override
+  String get emergencyBleeding => 'דימום';
+
+  @override
+  String get emergencyFractures => 'שברים';
+
+  @override
+  String get emergencySeizures => 'פרכוסים';
+
+  @override
+  String stepProgress(int current, int total) {
+    return 'שלב $current מתוך $total';
+  }
+
+  @override
+  String get stepNext => 'שלב הבא';
+
+  @override
+  String get stepDone => 'סיום';
+
+  @override
+  String get stepPrevious => 'הקודם';
+
+  @override
+  String get stepWarningsBtn => 'צפה באזהרות חשובות';
+
+  @override
+  String get stepWarningsTitle => 'אזהרות חשובות';
+
+  @override
+  String get stepWarningsGotIt => 'הבנתי';
+
+  @override
+  String get stepErrorInvalid =>
+      'נתוני הפרוטוקול אינם תקינים. אנא התקן את האפליקציה מחדש.';
+
+  @override
+  String get stepErrorFailed =>
+      'טעינת הפרוטוקול נכשלה. אנא הפעל מחדש את האפליקציה.';
+
+  @override
+  String get stepCompleteTitle => 'הטיפול הושלם';
+
+  @override
+  String stepCompleteBody(String emergencyTitle) {
+    return 'כל שלבי הפרוטוקול בוצעו בהצלחה עבור $emergencyTitle.';
+  }
+
+  @override
+  String get stepCompleteVitalsTitle => 'מעקב אחר מדדי המטופל';
+
+  @override
+  String get stepCompleteVitalsBody =>
+      'שמור על תצפית קלינית. ודא שהמטופל חם והימנע מתנועות פתאומיות עד להגעת הצוות הרפואי.';
+
+  @override
+  String get stepCompleteDisclaimer =>
+      'אפליקציה זו אינה מחליפה טיפול רפואי מקצועי. פנה לרופא במידת הצורך.';
+
+  @override
+  String get stepCompleteBackBtn => 'חזרה לדף הבית';
+
+  @override
+  String get settingsTitle => 'הגדרות';
+
+  @override
+  String get settingsSubtitle => 'הגדר את העוזר המציל שלך.';
+
+  @override
+  String get settingsSectionPreferences => 'העדפות';
+
+  @override
+  String get settingsLanguage => 'שפה';
+
+  @override
+  String get settingsTheme => 'מצב תצוגה';
+
+  @override
+  String get settingsVoiceGuidance => 'הנחיה קולית';
+
+  @override
+  String get settingsTtsSubtitle => 'הוראות שמע TTS';
+
+  @override
+  String get settingsSectionEmergencyContact => 'איש קשר לחירום';
+
+  @override
+  String get settingsAddContact => 'הוסף איש קשר לחירום';
+
+  @override
+  String get settingsAddContactSubtitle => 'שמור אדם אמין להתקשרות בחירום';
+
+  @override
+  String get settingsSectionLocation => 'כלי מיקום';
+
+  @override
+  String get settingsShareLocation => 'שתף את מיקומי';
+
+  @override
+  String get settingsShareLocationSubtitle => 'עדכונים שוטפים עם שירותי חירום';
+
+  @override
+  String get settingsSectionInfo => 'מידע';
+
+  @override
+  String get settingsMedicalSources => 'מקורות רפואיים';
+
+  @override
+  String get settingsMedicalSourcesSubtitle => 'צפה במקורות המאומתים שלנו';
+
+  @override
+  String get settingsAbout => 'אודות Guardian Angel';
+
+  @override
+  String get settingsAboutSubtitle => 'מידע על האפליקציה וגרסה';
+
+  @override
+  String get settingsDisclaimerTitle => 'כתב ויתור רפואי';
+
+  @override
+  String get settingsDisclaimerBody =>
+      'אפליקציה זו היא כלי חינוכי ותומך. היא אינה מחליפה ייעוץ רפואי מקצועי, אבחון או טיפול. תמיד היוועץ ברופאך או בספק בריאות מוסמך אחר לכל שאלה הנוגעת למצב רפואי. במקרה של חירום מסכן חיים, התקשר לשירותי חירום מקומיים מיד.';
+
+  @override
+  String get settingsSelectLanguage => 'בחר שפה';
+
+  @override
+  String get settingsCancel => 'ביטול';
+
+  @override
+  String get settingsClose => 'סגור';
+
+  @override
+  String get settingsThemeDialogTitle => 'מצב תצוגה';
+
+  @override
+  String get settingsThemeSystem => 'כמו במכשיר';
+
+  @override
+  String get settingsThemeLight => 'בהיר';
+
+  @override
+  String get settingsThemeDark => 'כהה';
+
+  @override
+  String get settingsContactDialogTitle => 'איש קשר לחירום';
+
+  @override
+  String get settingsContactName => 'שם';
+
+  @override
+  String get settingsContactPhone => 'מספר טלפון';
+
+  @override
+  String get settingsContactDelete => 'מחק';
+
+  @override
+  String get settingsContactSave => 'שמור';
+
+  @override
+  String get settingsContactValidation => 'אנא מלא את שני השדות';
+
+  @override
+  String get settingsContactDeleted => 'איש הקשר נמחק';
+
+  @override
+  String settingsContactSaved(String name) {
+    return '$name נשמר כאיש קשר לחירום';
+  }
+
+  @override
+  String get settingsCallFailed => 'לא ניתן לפתוח את החייגן';
+
+  @override
+  String get settingsCallContactTooltip => 'התקשר לאיש הקשר';
+
+  @override
+  String get settingsEditContactTooltip => 'ערוך איש קשר';
+
+  @override
+  String get settingsLocationFetching => 'מאחזר מיקום...';
+
+  @override
+  String get settingsLocationFailed =>
+      'לא ניתן לקבל מיקום. בדוק את הגדרות ה-GPS.';
+
+  @override
+  String get settingsLocationDialogTitle => 'המיקום שלי';
+
+  @override
+  String get settingsLocationShareHint =>
+      'שתף קישור זה עם מישהו כדי להציג את מיקומך:';
+
+  @override
+  String settingsLocationCoords(String coords) {
+    return 'קואורדינטות: $coords';
+  }
+
+  @override
+  String get settingsLocationCopy => 'העתק קישור';
+
+  @override
+  String get settingsLocationCopied => 'קישור המיקום הועתק! 📋';
+
+  @override
+  String get settingsSourcesDialogTitle => 'מקורות רפואיים';
+
+  @override
+  String get settingsSourcesIntro =>
+      'כל נהלי החירום מבוססים על מקורות מאומתים:';
+
+  @override
+  String get settingsSourcesRedCrossTitle => 'הצלב האדום האמריקאי';
+
+  @override
+  String get settingsSourcesRedCrossSubtitle => 'הנחיות עזרה ראשונה';
+
+  @override
+  String get settingsSourcesWHOTitle => 'ארגון הבריאות העולמי';
+
+  @override
+  String get settingsSourcesWHOSubtitle => 'טיפול חירום';
+
+  @override
+  String get settingsSourcesAHATitle => 'איגוד הלב האמריקאי';
+
+  @override
+  String get settingsSourcesAHASubtitle => 'תקני החייאה';
+
+  @override
+  String get settingsSourcesMDATitle => 'מגן דוד אדום';
+
+  @override
+  String get settingsSourcesMDASubtitle => 'פרוטוקולי חירום ישראליים';
+
+  @override
+  String get settingsSourcesLastVerified => 'אומת לאחרונה: ינואר 2026';
+
+  @override
+  String get settingsAboutDialogTitle => 'אודות Guardian Angel';
+
+  @override
+  String get settingsAboutVersion => 'גרסה 1.0.0';
+
+  @override
+  String get settingsAboutDescription =>
+      'מדריך אינטראקטיבי לעזרה ראשונה המספק הנחיות שלב אחר שלב במצבי חירום רפואיים.';
+
+  @override
+  String get settingsAboutDevelopedBy => 'פותח על ידי:';
+
+  @override
+  String get settingsAboutCopyright =>
+      '© 2026 Guardian Angel\nמכללת עזריאלי להנדסה';
+
+  @override
+  String get disclaimerSubtitle => 'מדריך עזרה ראשונה בחירום';
+
+  @override
+  String get disclaimerNoticeTitle => 'הודעה רפואית חשובה';
+
+  @override
+  String get disclaimerNoticeBody1 =>
+      'אפליקציה זו היא כלי תמיכה בהחלטות ואינה מחליפה טיפול רפואי מקצועי, אבחון או טיפול.';
+
+  @override
+  String get disclaimerNoticeBody2 =>
+      'במקרה של חירום מסכן חיים, פנה תמיד לשירותי החירום המקומיים (101) באופן מיידי.';
+
+  @override
+  String get disclaimerEmergencyTitle => 'במקרה חירום:';
+
+  @override
+  String get disclaimerBullet1 => 'התקשר ל-101 (מגן דוד אדום) מיד';
+
+  @override
+  String get disclaimerBullet2 => 'השתמש באפליקציה זו כמדריך בזמן המתנה לעזרה';
+
+  @override
+  String get disclaimerBullet3 => 'פנה לטיפול רפואי מקצועי לאחר עזרה ראשונה';
+
+  @override
+  String get disclaimerSourcesTitle => 'מקורות רפואיים מאומתים';
+
+  @override
+  String get disclaimerSource1 => 'הצלב האדום האמריקאי — הנחיות עזרה ראשונה';
+
+  @override
+  String get disclaimerSource2 => 'ארגון הבריאות העולמי — טיפול חירום';
+
+  @override
+  String get disclaimerSource3 => 'איגוד הלב האמריקאי — תקני החייאה';
+
+  @override
+  String get disclaimerSource4 => 'מגן דוד אדום — פרוטוקולי חירום ישראליים';
+
+  @override
+  String get disclaimerAcknowledge =>
+      'בהמשך, אתה מאשר שהנחיה זו אינה מחליפה שירותי חירום רפואיים ושתתקשר ל-101 במצבים רפואיים חמורים.';
+
+  @override
+  String get disclaimerVersion =>
+      'Guardian Angel v1.0.0 • ממשק Clinical Sentinel';
+
+  @override
+  String get disclaimerContinueBtn => 'הבנתי — המשך';
+}
