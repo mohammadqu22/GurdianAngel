@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian_angel/l10n/app_localizations.dart';
 import '../core/app_theme.dart';
+import '../widgets/gradient_button.dart';
 
 class StepScreen extends StatefulWidget {
   final String emergencyId;
@@ -307,48 +308,35 @@ class _StepScreenState extends State<StepScreen> {
               if (_currentStep > 0) const SizedBox(width: 12),
               Expanded(
                 flex: 2,
-                child: Container(
+                child: GradientButton(
                   height: 52,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: const Alignment(-0.97, -0.26),
-                      end: const Alignment(0.97, 0.26),
-                      colors: [
-                        widget.emergencyColor,
-                        widget.emergencyColor.withValues(alpha: 0.85),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      onTap: _nextStep,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _currentStep == totalSteps - 1
-                                ? l10n.stepDone
-                                : l10n.stepNext,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            _currentStep == totalSteps - 1
-                                ? Icons.check
-                                : Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ],
+                  gradientColors: [
+                    widget.emergencyColor,
+                    widget.emergencyColor.withValues(alpha: 0.85),
+                  ],
+                  onTap: _nextStep,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _currentStep == totalSteps - 1
+                            ? l10n.stepDone
+                            : l10n.stepNext,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.8,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        _currentStep == totalSteps - 1
+                            ? Icons.check
+                            : Icons.arrow_forward,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -492,38 +480,24 @@ class _StepScreenState extends State<StepScreen> {
             const SizedBox(height: 32),
 
             // ── Back to Home ──
-            Container(
+            GradientButton(
               width: double.infinity,
               height: 56,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: const Alignment(-0.97, -0.26),
-                  end: const Alignment(0.97, 0.26),
-                  colors: [cs.primary, cs.primaryContainer],
-                ),
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  onTap: () => Navigator.pop(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.home, color: cs.onPrimary, size: 22),
-                      const SizedBox(width: 10),
-                      Text(
-                        l10n.stepCompleteBackBtn,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: cs.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ],
+              onTap: () => Navigator.pop(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.home, color: cs.onPrimary, size: 22),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.stepCompleteBackBtn,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: cs.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:guardian_angel/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 import '../core/app_theme.dart';
+import '../widgets/gradient_button.dart';
 
 class DisclaimerScreen extends StatelessWidget {
   const DisclaimerScreen({
@@ -201,38 +202,24 @@ class DisclaimerScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // ── Accept Button ──
-              Container(
+              GradientButton(
                 width: double.infinity,
                 height: 56,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: const Alignment(-0.97, -0.26),
-                    end: const Alignment(0.97, 0.26),
-                    colors: [cs.primary, cs.primaryContainer],
+                boxShadow: [
+                  BoxShadow(
+                    color: cs.onSurface.withValues(alpha: 0.08),
+                    offset: const Offset(0, 16),
+                    blurRadius: 40,
                   ),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.onSurface.withValues(alpha: 0.08),
-                      offset: const Offset(0, 16),
-                      blurRadius: 40,
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    onTap: () => _acceptDisclaimer(context),
-                    child: Center(
-                      child: Text(
-                        l10n.disclaimerContinueBtn,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: cs.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
+                ],
+                onTap: () => _acceptDisclaimer(context),
+                child: Center(
+                  child: Text(
+                    l10n.disclaimerContinueBtn,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: cs.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
                     ),
                   ),
                 ),

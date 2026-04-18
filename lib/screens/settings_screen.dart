@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/database_service.dart';
 import '../services/location_service.dart';
 import '../core/app_theme.dart';
+import '../widgets/gradient_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -172,49 +173,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Text(l10n.settingsCancel),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: const Alignment(-0.97, -0.26),
-                          end: const Alignment(0.97, 0.26),
-                          colors: [dialogCs.primary, dialogCs.primaryContainer],
-                        ),
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          onTap: () async {
-                            final name  = nameController.text.trim();
-                            final phone = phoneController.text.trim();
-                            if (name.isEmpty || phone.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(l10n.settingsContactValidation)),
-                              );
-                              return;
-                            }
-                            final nav       = Navigator.of(context);
-                            final messenger = ScaffoldMessenger.of(context);
-                            await DatabaseService.saveEmergencyContact(name, phone);
-                            await _loadEmergencyContact();
-                            if (mounted) {
-                              nav.pop();
-                              messenger.showSnackBar(
-                                SnackBar(content: Text(l10n.settingsContactSaved(name))),
-                              );
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                            child: Text(
-                              l10n.settingsContactSave,
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color: dialogCs.onPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                    GradientButton(
+                      gradientColors: [dialogCs.primary, dialogCs.primaryContainer],
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      onTap: () async {
+                        final name  = nameController.text.trim();
+                        final phone = phoneController.text.trim();
+                        if (name.isEmpty || phone.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(l10n.settingsContactValidation)),
+                          );
+                          return;
+                        }
+                        final nav       = Navigator.of(context);
+                        final messenger = ScaffoldMessenger.of(context);
+                        await DatabaseService.saveEmergencyContact(name, phone);
+                        await _loadEmergencyContact();
+                        if (mounted) {
+                          nav.pop();
+                          messenger.showSnackBar(
+                            SnackBar(content: Text(l10n.settingsContactSaved(name))),
+                          );
+                        }
+                      },
+                      child: Text(
+                        l10n.settingsContactSave,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: dialogCs.onPrimary,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -338,45 +324,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Text(dl10n.settingsClose),
                       ),
                       const SizedBox(width: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: const Alignment(-0.97, -0.26),
-                            end: const Alignment(0.97, 0.26),
-                            colors: [dialogCs.primary, dialogCs.primaryContainer],
-                          ),
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            onTap: () {
-                              final messenger = ScaffoldMessenger.of(context);
-                              Clipboard.setData(ClipboardData(text: mapsLink));
-                              Navigator.pop(context);
-                              messenger.showSnackBar(
-                                SnackBar(content: Text(dl10n.settingsLocationCopied)),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.copy, size: 18, color: dialogCs.onPrimary),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    dl10n.settingsLocationCopy,
-                                    style: theme.textTheme.labelLarge?.copyWith(
-                                      color: dialogCs.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                      GradientButton(
+                        gradientColors: [dialogCs.primary, dialogCs.primaryContainer],
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        onTap: () {
+                          final messenger = ScaffoldMessenger.of(context);
+                          Clipboard.setData(ClipboardData(text: mapsLink));
+                          Navigator.pop(context);
+                          messenger.showSnackBar(
+                            SnackBar(content: Text(dl10n.settingsLocationCopied)),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.copy, size: 18, color: dialogCs.onPrimary),
+                            const SizedBox(width: 8),
+                            Text(
+                              dl10n.settingsLocationCopy,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: dialogCs.onPrimary,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ],
