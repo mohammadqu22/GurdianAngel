@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/app_theme.dart';
 
-/// A tappable button with a horizontal linear gradient background.
+/// A tappable button with a near-horizontal diagonal linear gradient background
+/// (begin: Alignment(-0.97, -0.26) → end: Alignment(0.97, 0.26), ≈15° tilt).
 ///
 /// Replaces the repeated `Container → LinearGradient → Material → InkWell`
 /// pattern used for primary action buttons throughout the app.

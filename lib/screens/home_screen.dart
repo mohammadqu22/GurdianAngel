@@ -211,7 +211,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(32),
-                  onTap: () => PhoneService.call('101', context, fabL10n.homeCallFailed),
+                  onTap: () => PhoneService.call(
+                    '101', context, fabL10n.homeCallFailed,
+                    duration: const Duration(seconds: 3),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(

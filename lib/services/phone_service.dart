@@ -5,20 +5,29 @@ import 'package:url_launcher/url_launcher.dart';
 class PhoneService {
   PhoneService._();
 
+  /// Dials [number] and shows a snackbar with [errorMessage] on failure.
+  ///
+  /// [duration] overrides the default SnackBar display duration.
   static Future<void> call(
     String number,
     BuildContext context,
-    String errorMessage,
-  ) async {
+    String errorMessage, {
+    Duration? duration,
+  }) async {
     final uri = Uri(scheme: 'tel', path: number);
+    bool failed = false;
     try {
-      await launchUrl(uri);
+      failed = !await launchUrl(uri);
     } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
-      }
+      failed = true;
+    }
+    if (failed && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          duration: duration ?? const Duration(milliseconds: 4000),
+        ),
+      );
     }
   }
 }
