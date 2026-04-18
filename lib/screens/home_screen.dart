@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:guardian_angel/l10n/app_localizations.dart';
 import 'step_screen.dart';
 import 'settings_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/app_theme.dart';
+import '../services/phone_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -211,21 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(32),
-                  onTap: () async {
-                    final Uri callUri = Uri(scheme: 'tel', path: '101');
-                    try {
-                      await launchUrl(callUri);
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(fabL10n.homeCallFailed),
-                            duration: const Duration(seconds: 3),
-                          ),
-                        );
-                      }
-                    }
-                  },
+                  onTap: () => PhoneService.call('101', context, fabL10n.homeCallFailed),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(

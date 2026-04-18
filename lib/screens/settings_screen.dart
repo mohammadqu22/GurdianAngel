@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:guardian_angel/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../services/database_service.dart';
 import '../services/location_service.dart';
+import '../services/phone_service.dart';
 import '../core/app_theme.dart';
 import '../widgets/gradient_button.dart';
 
@@ -217,17 +217,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _callEmergencyContact() async {
     if (_emergencyContact == null) return;
     final l10n  = AppLocalizations.of(context)!;
-    final phone = _emergencyContact!['phone_number'];
-    final Uri callUri = Uri(scheme: 'tel', path: phone);
-    try {
-      await launchUrl(callUri);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.settingsCallFailed)),
-        );
-      }
-    }
+    final phone = _emergencyContact!['phone_number'] as String;
+    await PhoneService.call(phone, context, l10n.settingsCallFailed);
   }
 
   Future<void> _showLocationDialog() async {
