@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 import '../core/app_theme.dart';
 import '../widgets/gradient_button.dart';
+import '../widgets/source_item.dart';
 
 class DisclaimerScreen extends StatelessWidget {
   const DisclaimerScreen({
@@ -164,10 +165,10 @@ class DisclaimerScreen extends StatelessWidget {
                         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
-                      _buildSourceItem(context, l10n.disclaimerSource1),
-                      _buildSourceItem(context, l10n.disclaimerSource2),
-                      _buildSourceItem(context, l10n.disclaimerSource3),
-                      _buildSourceItem(context, l10n.disclaimerSource4),
+                      SourceItem(title: l10n.disclaimerSource1, icon: Icons.verified, iconSize: 18, bottomPadding: 10),
+                      SourceItem(title: l10n.disclaimerSource2, icon: Icons.verified, iconSize: 18, bottomPadding: 10),
+                      SourceItem(title: l10n.disclaimerSource3, icon: Icons.verified, iconSize: 18, bottomPadding: 10),
+                      SourceItem(title: l10n.disclaimerSource4, icon: Icons.verified, iconSize: 18, bottomPadding: 10),
 
                       const SizedBox(height: 24),
 
@@ -260,23 +261,4 @@ class DisclaimerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSourceItem(BuildContext context, String source) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.verified, color: cs.tertiary, size: 18),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              source,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: cs.onSurface),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

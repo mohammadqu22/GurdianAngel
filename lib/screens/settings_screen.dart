@@ -7,6 +7,7 @@ import '../services/location_service.dart';
 import '../services/phone_service.dart';
 import '../core/app_theme.dart';
 import '../widgets/gradient_button.dart';
+import '../widgets/source_item.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -809,10 +810,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                _buildSourceItem(dl10n.settingsSourcesRedCrossTitle, dl10n.settingsSourcesRedCrossSubtitle),
-                _buildSourceItem(dl10n.settingsSourcesWHOTitle,      dl10n.settingsSourcesWHOSubtitle),
-                _buildSourceItem(dl10n.settingsSourcesAHATitle,      dl10n.settingsSourcesAHASubtitle),
-                _buildSourceItem(dl10n.settingsSourcesMDATitle,      dl10n.settingsSourcesMDASubtitle),
+                SourceItem(title: dl10n.settingsSourcesRedCrossTitle, subtitle: dl10n.settingsSourcesRedCrossSubtitle),
+                SourceItem(title: dl10n.settingsSourcesWHOTitle,      subtitle: dl10n.settingsSourcesWHOSubtitle),
+                SourceItem(title: dl10n.settingsSourcesAHATitle,      subtitle: dl10n.settingsSourcesAHASubtitle),
+                SourceItem(title: dl10n.settingsSourcesMDATitle,      subtitle: dl10n.settingsSourcesMDASubtitle),
                 const SizedBox(height: 16),
                 Text(
                   dl10n.settingsSourcesLastVerified,
@@ -831,33 +832,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildSourceItem(String title, String subtitle) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.check_circle, color: cs.tertiary, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600, fontSize: 15)),
-                Text(subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant, fontSize: 13)),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
