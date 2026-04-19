@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:guardian_angel/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_theme.dart';
 import '../widgets/gradient_button.dart';
+import '../services/tts_service.dart';
 
 class StepScreen extends StatefulWidget {
   final String emergencyId;
@@ -29,6 +31,16 @@ class _StepScreenState extends State<StepScreen> {
   bool _completed    = false;
   String? _errorMessage;
   String? _loadedLocale; // tracks which locale's JSON is currently loaded
+  bool _ttsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      if (!mounted) return;
+      setState(() => _ttsEnabled = prefs.getBool('tts_enabled') ?? true);
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -102,20 +114,55 @@ class _StepScreenState extends State<StepScreen> {
       _warnings = json['warnings'] ?? [];
       _loading  = false;
     });
+    if (_ttsEnabled && steps.isNotEmpty) {
+      TtsService.instance.speak(
+        widget.emergencyId,
+        steps[0]['step'] as int,
+        _ttsLangCode(_loadedLocale ?? 'en'),
+      );
+    }
   }
 
   void _nextStep() {
     if (_currentStep < _steps.length - 1) {
       setState(() => _currentStep++);
+      _speakCurrentStep();
     } else {
       setState(() => _completed = true);
+      if (_ttsEnabled) TtsService.instance.stop();
     }
   }
 
   void _previousStep() {
     if (_currentStep > 0) {
       setState(() => _currentStep--);
+      _speakCurrentStep();
     }
+  }
+
+  void _speakCurrentStep() {
+    if (_ttsEnabled) {
+      final step = _steps[_currentStep];
+      TtsService.instance.speak(
+        widget.emergencyId,
+        step['step'] as int,
+        _ttsLangCode(_loadedLocale ?? 'en'),
+      );
+    }
+  }
+
+  static String _ttsLangCode(String locale) {
+    switch (locale) {
+      case 'ar': return 'ar-SA';
+      case 'he': return 'he-IL';
+      default:   return 'en-US';
+    }
+  }
+
+  @override
+  void dispose() {
+    TtsService.instance.stop();
+    super.dispose();
   }
 
   @override
@@ -274,6 +321,20 @@ class _StepScreenState extends State<StepScreen> {
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    IconButton(
+                      onPressed: _ttsEnabled
+                          ? () => TtsService.instance.repeat()
+                          : null,
+                      icon: Icon(
+                        Icons.replay_circle_filled,
+                        color: _ttsEnabled
+                            ? widget.emergencyColor
+                            : cs.onSurfaceVariant.withValues(alpha: 0.3),
+                        size: 28,
+                      ),
+                      tooltip: 'Repeat',
                     ),
                   ],
                 ),

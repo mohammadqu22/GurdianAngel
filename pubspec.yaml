@@ -46,9 +46,9 @@ dependencies:
   path_provider: ^2.1.1
   path: ^1.8.3
   
-  # Text-to-Speech (we'll use later)
-  flutter_tts: ^4.0.2
-  
+  # Pre-recorded audio playback for step instructions
+  audioplayers: ^6.1.0
+
   # Phone calling (we'll use later)
   url_launcher: ^6.2.2
 
@@ -95,6 +95,30 @@ flutter:
     - assets/images/cpr/
     - assets/images/cpr_infant/
     - assets/images/seizures/
+    - assets/audio/en/bleeding/
+    - assets/audio/en/burns/
+    - assets/audio/en/choking/
+    - assets/audio/en/choking_infant/
+    - assets/audio/en/cpr/
+    - assets/audio/en/cpr_infant/
+    - assets/audio/en/fractures/
+    - assets/audio/en/seizures/
+    - assets/audio/he/bleeding/
+    - assets/audio/he/burns/
+    - assets/audio/he/choking/
+    - assets/audio/he/choking_infant/
+    - assets/audio/he/cpr/
+    - assets/audio/he/cpr_infant/
+    - assets/audio/he/fractures/
+    - assets/audio/he/seizures/
+    - assets/audio/ar/bleeding/
+    - assets/audio/ar/burns/
+    - assets/audio/ar/choking/
+    - assets/audio/ar/choking_infant/
+    - assets/audio/ar/cpr/
+    - assets/audio/ar/cpr_infant/
+    - assets/audio/ar/fractures/
+    - assets/audio/ar/seizures/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
