@@ -308,67 +308,67 @@ class _StepScreenState extends State<StepScreen> {
                         SingleChildScrollView(
                           controller: _cardScrollController,
                           child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Step number circle
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: widget.emergencyColor,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${_currentStep + 1}',
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Step number circle
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: widget.emergencyColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${_currentStep + 1}',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(AppRadius.md),
-                              child: Image.asset(
-                                step['image'] ?? 'assets/images/${widget.emergencyId}/step_${_currentStep + 1}.png',
-                                height: 240,
-                                width: double.infinity,
-                                fit: BoxFit.contain,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(AppRadius.md),
+                                  child: Image.asset(
+                                    step['image'] ?? 'assets/images/${widget.emergencyId}/step_${_currentStep + 1}.png',
+                                    height: 240,
+                                    width: double.infinity,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
 
-                          const SizedBox(height: 12),
+                              const SizedBox(height: 12),
 
-                          // Step title — from JSON (not localized; JSON has its own language)
-                          Text(
-                            step['title'],
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: widget.emergencyColor,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
+                              // Step title — from JSON (not localized; JSON has its own language)
+                              Text(
+                                step['title'],
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.emergencyColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
 
-                          // Step instruction — from JSON
-                          Text(
-                            step['instruction'],
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: cs.onSurface,
-                              fontSize: 17,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
+                              // Step instruction — from JSON
+                              Text(
+                                step['instruction'],
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: cs.onSurface,
+                                  fontSize: 17,
+                                  height: 1.5,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
                         // Fade overlay — signals more content below
                         if (_showScrollFade)
                           Positioned(

@@ -20,7 +20,7 @@ class TtsService {
           isSpeakerphoneOn: false,
           stayAwake: false,
           contentType: AndroidContentType.speech,
-          usageType: AndroidUsageType.assistanceSonification,
+          usageType: AndroidUsageType.assistant,
           audioFocus: AndroidAudioFocus.gain,
         ),
       ),
@@ -51,10 +51,6 @@ class TtsService {
 
   Future<void> stop() async {
     await _player.stop();
-  }
-
-  Future<void> dispose() async {
-    await _player.dispose();
   }
 
   Future<void> repeat() async {
