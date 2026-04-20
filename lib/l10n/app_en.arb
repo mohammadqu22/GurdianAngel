@@ -49,6 +49,7 @@
   "stepCompleteVitalsBody": "Maintain clinical observation. Ensure the patient remains warm and avoid sudden movements while waiting for medical staff arrival.",
   "stepCompleteDisclaimer": "This app does not replace professional medical care. Seek a doctor if needed.",
   "stepCompleteBackBtn": "BACK TO HOME",
+  "stepRepeatAudio": "Repeat audio",
 
   "settingsTitle": "Settings",
   "settingsSubtitle": "Configure your life-saving assistant.",

@@ -111,6 +111,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stepCompleteBackBtn => 'BACK TO HOME';
 
   @override
+  String get stepRepeatAudio => 'Repeat audio';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

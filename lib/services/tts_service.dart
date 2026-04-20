@@ -40,8 +40,13 @@ class TtsService {
 
     final lang = _langFolder(languageCode);
     final path = 'audio/$lang/$emergencyId/step_$stepIndex.mp3';
-    await _player.stop();
-    await _player.play(AssetSource(path));
+    try {
+      await _player.stop();
+      await _player.play(AssetSource(path));
+    } catch (_) {
+      // Asset missing or playback failure — fail silently so the app
+      // remains fully usable without audio.
+    }
   }
 
   Future<void> stop() async {

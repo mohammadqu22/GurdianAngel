@@ -39,9 +39,9 @@ flutter test
 ## Architecture
 
 ### App Startup Flow (`lib/main.dart`)
-1. `DatabaseService.database` initializes SQLite tables
-2. `TtsService.instance.init()` initializes the TTS engine
-3. `SharedPreferences` loads `disclaimer_accepted`, `theme_mode`, and `language` preferences
+1. `SharedPreferences` loads `disclaimer_accepted`, `theme_mode`, and `language` preferences
+2. `DatabaseService.database` initializes SQLite tables (failure is non-fatal)
+3. `TtsService.instance.init()` configures the audio session (failure is non-fatal)
 4. `PermissionService.requestAppPermissions()` requests phone and location permissions (non-blocking)
 5. Routes to `DisclaimerScreen` (first launch) or `HomeScreen` (returning users)
 
@@ -107,4 +107,4 @@ Language selection (English / Hebrew / Arabic) is fully wired end-to-end:
 - `StepScreen` reloads the protocol JSON for the new locale via `didChangeDependencies()`
 - TTS uses matching language codes: `en-US`, `he-IL`, `ar-SA`
 
-On iOS, TTS uses `setVoice` (via `getVoices`) rather than `setLanguage` alone to reliably activate non-English voices. The Arabic/Hebrew TTS voice must be installed on the device: **Settings → Accessibility → Spoken Content → Voices**.
+Audio playback uses pre-recorded MP3 files bundled in `assets/audio/` — no device TTS voice installation required. Playback failures (missing asset, audio focus loss) are caught silently so the app remains fully usable without sound.

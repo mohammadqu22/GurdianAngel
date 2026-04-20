@@ -31,7 +31,8 @@ class _StepScreenState extends State<StepScreen> {
   bool _completed    = false;
   String? _errorMessage;
   String? _loadedLocale; // tracks which locale's JSON is currently loaded
-  bool _ttsEnabled = true;
+  bool _ttsEnabled   = true;
+  bool _ttsKnown     = false; // true once tts_enabled pref has been read
 
   @override
   void initState() {
@@ -39,9 +40,12 @@ class _StepScreenState extends State<StepScreen> {
     SharedPreferences.getInstance().then((prefs) {
       if (!mounted) return;
       final enabled = prefs.getBool('tts_enabled') ?? true;
-      setState(() => _ttsEnabled = enabled);
-      // Protocol is already loaded by didChangeDependencies at this point.
-      // Speak the first step now that we know whether TTS is enabled.
+      setState(() {
+        _ttsEnabled = enabled;
+        _ttsKnown   = true;
+      });
+      // If the protocol finished loading before the pref was known,
+      // speak the first step now. Otherwise _loadProtocol handles it.
       if (enabled && _steps.isNotEmpty) {
         TtsService.instance.speak(
           widget.emergencyId,
@@ -124,8 +128,15 @@ class _StepScreenState extends State<StepScreen> {
       _warnings = json['warnings'] ?? [];
       _loading  = false;
     });
-    // Auto-speak is handled in initState after tts_enabled pref is loaded,
-    // to avoid a race where _ttsEnabled is still the default `true` here.
+    // Speak the first step only if the tts_enabled pref is already known.
+    // If it hasn't loaded yet, initState's callback will speak once it resolves.
+    if (_ttsKnown && _ttsEnabled) {
+      TtsService.instance.speak(
+        widget.emergencyId,
+        steps[0]['step'] as int,
+        _ttsLangCode(_loadedLocale ?? 'en'),
+      );
+    }
   }
 
   void _nextStep() {
@@ -339,7 +350,7 @@ class _StepScreenState extends State<StepScreen> {
                             : cs.onSurfaceVariant.withValues(alpha: 0.3),
                         size: 28,
                       ),
-                      tooltip: 'Repeat',
+                      tooltip: l10n.stepRepeatAudio,
                     ),
                   ],
                 ),
