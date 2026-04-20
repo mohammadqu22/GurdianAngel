@@ -31,6 +31,7 @@
   "stepCompleteVitalsBody": "שמור על תצפית קלינית. ודא שהמטופל חם והימנע מתנועות פתאומיות עד להגעת הצוות הרפואי.",
   "stepCompleteDisclaimer": "אפליקציה זו אינה מחליפה טיפול רפואי מקצועי. פנה לרופא במידת הצורך.",
   "stepCompleteBackBtn": "חזרה לדף הבית",
+  "stepRepeatAudio": "חזור על הצליל",
   "settingsTitle": "הגדרות",
   "settingsSubtitle": "הגדר את העוזר המציל שלך.",
   "settingsSectionPreferences": "העדפות",

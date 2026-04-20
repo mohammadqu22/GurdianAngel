@@ -286,6 +286,12 @@ abstract class AppLocalizations {
   /// **'BACK TO HOME'**
   String get stepCompleteBackBtn;
 
+  /// No description provided for @stepRepeatAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat audio'**
+  String get stepRepeatAudio;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

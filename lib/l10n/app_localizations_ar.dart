@@ -110,6 +110,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get stepCompleteBackBtn => 'العودة إلى الرئيسية';
 
   @override
+  String get stepRepeatAudio => 'إعادة الصوت';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override
