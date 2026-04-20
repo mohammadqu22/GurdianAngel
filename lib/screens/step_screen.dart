@@ -33,10 +33,26 @@ class _StepScreenState extends State<StepScreen> {
   String? _loadedLocale; // tracks which locale's JSON is currently loaded
   bool _ttsEnabled   = true;
   bool _ttsKnown     = false; // true once tts_enabled pref has been read
+  final ScrollController _cardScrollController = ScrollController();
+  bool _showScrollFade = false;
+
+  void _checkScrollable() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_cardScrollController.hasClients) return;
+      final show = _cardScrollController.position.maxScrollExtent > 1;
+      if (show != _showScrollFade) setState(() => _showScrollFade = show);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _cardScrollController.addListener(() {
+      final atBottom =
+          _cardScrollController.offset >= _cardScrollController.position.maxScrollExtent - 1;
+      final shouldShow = !atBottom;
+      if (shouldShow != _showScrollFade) setState(() => _showScrollFade = shouldShow);
+    });
     SharedPreferences.getInstance().then((prefs) {
       if (!mounted) return;
       final enabled = prefs.getBool('tts_enabled') ?? true;
@@ -128,6 +144,7 @@ class _StepScreenState extends State<StepScreen> {
       _warnings = json['warnings'] ?? [];
       _loading  = false;
     });
+    _checkScrollable();
     // Speak the first step only if the tts_enabled pref is already known.
     // If it hasn't loaded yet, initState's callback will speak once it resolves.
     if (_ttsKnown && _ttsEnabled) {
@@ -142,6 +159,8 @@ class _StepScreenState extends State<StepScreen> {
   void _nextStep() {
     if (_currentStep < _steps.length - 1) {
       setState(() => _currentStep++);
+      _cardScrollController.jumpTo(0);
+      _checkScrollable();
       _speakCurrentStep();
     } else {
       setState(() => _completed = true);
@@ -152,6 +171,8 @@ class _StepScreenState extends State<StepScreen> {
   void _previousStep() {
     if (_currentStep > 0) {
       setState(() => _currentStep--);
+      _cardScrollController.jumpTo(0);
+      _checkScrollable();
       _speakCurrentStep();
     }
   }
@@ -177,6 +198,7 @@ class _StepScreenState extends State<StepScreen> {
 
   @override
   void dispose() {
+    _cardScrollController.dispose();
     TtsService.instance.stop();
     super.dispose();
   }
@@ -278,82 +300,115 @@ class _StepScreenState extends State<StepScreen> {
                   width: 1,
                 ),
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Step number circle
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: widget.emergencyColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${_currentStep + 1}',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        SingleChildScrollView(
+                          controller: _cardScrollController,
+                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Step number circle
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: widget.emergencyColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${_currentStep + 1}',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        child: Image.asset(
-                          step['image'] ?? 'assets/images/${widget.emergencyId}/step_${_currentStep + 1}.png',
-                          height: 240,
-                          width: double.infinity,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                              child: Image.asset(
+                                step['image'] ?? 'assets/images/${widget.emergencyId}/step_${_currentStep + 1}.png',
+                                height: 240,
+                                width: double.infinity,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
 
-                    const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                    // Step title — from JSON (not localized; JSON has its own language)
-                    Text(
-                      step['title'],
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: widget.emergencyColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
+                          // Step title — from JSON (not localized; JSON has its own language)
+                          Text(
+                            step['title'],
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: widget.emergencyColor,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
 
-                    // Step instruction — from JSON
-                    Text(
-                      step['instruction'],
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: cs.onSurface,
-                        fontSize: 17,
-                        height: 1.5,
+                          // Step instruction — from JSON
+                          Text(
+                            step['instruction'],
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: cs.onSurface,
+                              fontSize: 17,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 12),
-                    IconButton(
-                      onPressed: _ttsEnabled
-                          ? () => TtsService.instance.repeat()
-                          : null,
-                      icon: Icon(
-                        Icons.replay_circle_filled,
-                        color: _ttsEnabled
-                            ? widget.emergencyColor
-                            : cs.onSurfaceVariant.withValues(alpha: 0.3),
-                        size: 28,
-                      ),
-                      tooltip: l10n.stepRepeatAudio,
+                        // Fade overlay — signals more content below
+                        if (_showScrollFade)
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: IgnorePointer(
+                              child: Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      cs.surfaceContainerLow.withValues(alpha: 0),
+                                      cs.surfaceContainerLow,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  // Repeat button — pinned at the bottom of the card, never scrolls away
+                  IconButton(
+                    onPressed: _ttsEnabled
+                        ? () => TtsService.instance.repeat()
+                        : null,
+                    icon: Icon(
+                      Icons.replay_circle_filled,
+                      color: _ttsEnabled
+                          ? widget.emergencyColor
+                          : cs.onSurfaceVariant.withValues(alpha: 0.3),
+                      size: 28,
+                    ),
+                    tooltip: l10n.stepRepeatAudio,
+                  ),
+                ],
               ),
             ),
           ),
