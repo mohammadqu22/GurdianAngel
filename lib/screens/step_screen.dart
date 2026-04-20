@@ -38,7 +38,17 @@ class _StepScreenState extends State<StepScreen> {
     super.initState();
     SharedPreferences.getInstance().then((prefs) {
       if (!mounted) return;
-      setState(() => _ttsEnabled = prefs.getBool('tts_enabled') ?? true);
+      final enabled = prefs.getBool('tts_enabled') ?? true;
+      setState(() => _ttsEnabled = enabled);
+      // Protocol is already loaded by didChangeDependencies at this point.
+      // Speak the first step now that we know whether TTS is enabled.
+      if (enabled && _steps.isNotEmpty) {
+        TtsService.instance.speak(
+          widget.emergencyId,
+          _steps[0]['step'] as int,
+          _ttsLangCode(_loadedLocale ?? 'en'),
+        );
+      }
     });
   }
 
@@ -114,13 +124,8 @@ class _StepScreenState extends State<StepScreen> {
       _warnings = json['warnings'] ?? [];
       _loading  = false;
     });
-    if (_ttsEnabled && steps.isNotEmpty) {
-      TtsService.instance.speak(
-        widget.emergencyId,
-        steps[0]['step'] as int,
-        _ttsLangCode(_loadedLocale ?? 'en'),
-      );
-    }
+    // Auto-speak is handled in initState after tts_enabled pref is loaded,
+    // to avoid a race where _ttsEnabled is still the default `true` here.
   }
 
   void _nextStep() {

@@ -82,7 +82,7 @@ All navigation uses `Navigator.push()` — there is no named route system. The f
 | `permission_service.dart` | Implemented | Phone + location permissions |
 | `location_service.dart` | Implemented | GPS coords + Google Maps link |
 | `phone_service.dart` | Implemented | Initiates phone calls via `tel:` URI; used for SOS (101) and emergency contacts |
-| `tts_service.dart` | Implemented | Singleton TTS via `flutter_tts`; speaks step title + instruction per step |
+| `tts_service.dart` | Implemented | Singleton audio player via `audioplayers`; plays pre-recorded MP3s from `assets/audio/` |
 | `protocol_loader.dart` | **Empty** | JSON loading is done inline in `StepScreen` |
 
 ### Widgets

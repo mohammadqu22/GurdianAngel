@@ -51,8 +51,12 @@ class _GuardianAngelAppState extends State<GuardianAngelApp> {
       await prefs.setString('language', langPref);
     }
 
-    // Initialise services — failures here must not override the prefs values.
-    await DatabaseService.database;
+    // Initialise services — failures must not prevent the UI from loading.
+    try {
+      await DatabaseService.database;
+    } catch (_) {
+      // DB unavailable; contacts/log features will be degraded.
+    }
     try {
       await TtsService.instance.init();
     } catch (_) {

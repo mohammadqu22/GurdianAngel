@@ -48,6 +48,10 @@ class TtsService {
     await _player.stop();
   }
 
+  Future<void> dispose() async {
+    await _player.dispose();
+  }
+
   Future<void> repeat() async {
     if (_lastEmergencyId != null &&
         _lastStepIndex   != null &&
