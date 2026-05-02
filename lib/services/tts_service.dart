@@ -27,8 +27,6 @@ class TtsService {
     );
   }
 
-  /// Plays the pre-recorded MP3 for [emergencyId] step [stepIndex] (1-based)
-  /// in the given [languageCode] ('en-US', 'he-IL', or 'ar-SA').
   Future<void> speak(
     String emergencyId,
     int stepIndex,
@@ -39,13 +37,14 @@ class TtsService {
     _lastLangCode    = languageCode;
 
     final lang = _langFolder(languageCode);
-    final path = 'audio/$lang/$emergencyId/step_$stepIndex.mp3';
+    final path = 'audio/$lang/$emergencyId/step_$stepIndex.wav';
     try {
-      await _player.stop();
+      
+        await _player.stop();
+      
       await _player.play(AssetSource(path));
     } catch (_) {
-      // Asset missing or playback failure — fail silently so the app
-      // remains fully usable without audio.
+      // Asset missing or playback failure — fail silently.
     }
   }
 
@@ -61,7 +60,6 @@ class TtsService {
     }
   }
 
-  /// Maps BCP-47 language code to the audio folder name.
   static String _langFolder(String languageCode) {
     switch (languageCode) {
       case 'ar-SA': return 'ar';
